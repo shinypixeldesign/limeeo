@@ -107,6 +107,9 @@ export async function createOfferAction(state: OfferState, formData: FormData): 
   const clientId = formData.get('client_id') as string
   const projectId = formData.get('project_id') as string
 
+  const urgencyEnabled = formData.get('urgency_discount_enabled') === 'true'
+  const urgencyDays = parseInt(formData.get('urgency_discount_days') as string) || 7
+
   const { data: offer, error } = await supabase.from('offers').insert({
     user_id: user.id,
     client_id: clientId || null,
@@ -131,6 +134,14 @@ export async function createOfferAction(state: OfferState, formData: FormData): 
     payment_conditions: (formData.get('payment_conditions') as string) || null,
     project_start_date: (formData.get('project_start_date') as string) || null,
     revisions_included: formData.get('revisions_included') ? parseInt(formData.get('revisions_included') as string) : null,
+    auto_convert_currency: formData.get('auto_convert_currency') === 'true',
+    urgency_discount_enabled: urgencyEnabled,
+    urgency_discount_type: (formData.get('urgency_discount_type') as string) || 'percent',
+    urgency_discount_value: parseFloat(formData.get('urgency_discount_value') as string) || 0,
+    urgency_discount_days: urgencyDays,
+    urgency_discount_expires_at: urgencyEnabled
+      ? new Date(Date.now() + urgencyDays * 86400000).toISOString()
+      : null,
   }).select('id').single()
 
   if (error || !offer) return { error: `Eroare la salvare: ${error?.message ?? 'necunoscută'}` }
@@ -183,6 +194,9 @@ export async function updateOfferAction(state: OfferState, formData: FormData): 
   const validUntilRaw = formData.get('valid_until') as string
   const validUntil = validUntilRaw || null
 
+  const urgencyEnabled = formData.get('urgency_discount_enabled') === 'true'
+  const urgencyDays = parseInt(formData.get('urgency_discount_days') as string) || 7
+
   const { error } = await supabase.from('offers').update({
     client_id: (formData.get('client_id') as string) || null,
     project_id: (formData.get('project_id') as string) || null,
@@ -204,6 +218,14 @@ export async function updateOfferAction(state: OfferState, formData: FormData): 
     payment_conditions: (formData.get('payment_conditions') as string) || null,
     project_start_date: (formData.get('project_start_date') as string) || null,
     revisions_included: formData.get('revisions_included') ? parseInt(formData.get('revisions_included') as string) : null,
+    auto_convert_currency: formData.get('auto_convert_currency') === 'true',
+    urgency_discount_enabled: urgencyEnabled,
+    urgency_discount_type: (formData.get('urgency_discount_type') as string) || 'percent',
+    urgency_discount_value: parseFloat(formData.get('urgency_discount_value') as string) || 0,
+    urgency_discount_days: urgencyDays,
+    urgency_discount_expires_at: urgencyEnabled
+      ? new Date(Date.now() + urgencyDays * 86400000).toISOString()
+      : null,
   }).eq('id', id).eq('user_id', user.id)
 
   if (error) return { error: `Eroare la actualizare: ${error.message}` }

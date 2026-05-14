@@ -227,7 +227,7 @@ export interface AiMessage {
 }
 
 export type OfferStatus = 'draft' | 'sent' | 'viewed' | 'accepted' | 'rejected'
-export type OfferItemType = 'fix' | 'hourly' | 'rate_card'
+export type OfferItemType = 'fix' | 'hourly' | 'rate_card' | 'monthly'
 export type DiscountType = 'none' | 'percent' | 'fixed'
 
 export interface Offer {
@@ -264,6 +264,13 @@ export interface Offer {
   payment_conditions: string | null
   project_start_date: string | null
   revisions_included: number | null
+  // Urgency discount
+  auto_convert_currency: boolean
+  urgency_discount_enabled: boolean
+  urgency_discount_type: string  // 'percent' | 'fixed'
+  urgency_discount_value: number
+  urgency_discount_days: number
+  urgency_discount_expires_at: string | null
   // Relații (join)
   client?: Client
   project?: Project

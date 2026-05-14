@@ -3,11 +3,12 @@ import { createClient } from '@/lib/supabase/server'
 import { markOfferViewedAction } from '@/app/actions/offers'
 import type { Offer, OfferItem, Client } from '@/types/database'
 import PublicOfferActions from '@/components/offers/PublicOfferActions'
+import UrgencyCountdownBanner from '@/components/offers/UrgencyCountdownBanner'
 
 type PublicOffer = Offer & { client: Client | null; offer_items: OfferItem[] }
 
 const TYPE_LABELS: Record<string, string> = {
-  fix: 'Preț fix', hourly: 'Per oră', rate_card: 'Rate Card',
+  fix: 'Preț fix', hourly: 'Per oră', rate_card: 'Rate Card', monthly: 'Abonament lunar',
 }
 
 export default async function PublicOfferPage({ params }: { params: Promise<{ token: string }> }) {
@@ -44,6 +45,17 @@ export default async function PublicOfferPage({ params }: { params: Promise<{ to
   const isExpired = offer.valid_until && new Date(offer.valid_until) < new Date()
   const canAct = ['sent', 'viewed'].includes(offer.status) && !isExpired
 
+  // Urgency discount logic
+  const urgencyActive = offer.urgency_discount_enabled && offer.urgency_discount_expires_at
+  const urgencyExpired = urgencyActive && new Date(offer.urgency_discount_expires_at!) < new Date()
+  const showDiscount = urgencyActive && !urgencyExpired
+
+  const discountedTotal = showDiscount
+    ? offer.urgency_discount_type === 'percent'
+      ? Math.round(offer.total * (1 - offer.urgency_discount_value / 100) * 100) / 100
+      : Math.max(0, offer.total - offer.urgency_discount_value)
+    : offer.total
+
   // Group items by category
   const grouped = sortedItems.reduce<Record<string, typeof sortedItems>>((acc, item) => {
     const cat = (item as OfferItem & { category?: string }).category || ''
@@ -57,6 +69,16 @@ export default async function PublicOfferPage({ params }: { params: Promise<{ to
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f1f5f9' }}>
+
+      {/* Urgency countdown banner */}
+      {showDiscount && offer.urgency_discount_expires_at && (
+        <UrgencyCountdownBanner
+          expiresAt={offer.urgency_discount_expires_at}
+          discountValue={offer.urgency_discount_value}
+          discountType={offer.urgency_discount_type}
+          brandColor={accent}
+        />
+      )}
 
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-5">
 
@@ -306,10 +328,23 @@ export default async function PublicOfferPage({ params }: { params: Promise<{ to
                   <span className="font-medium text-slate-700">{fmt(offer.tax_amount)} {offer.currency}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center text-xl font-bold pt-3 border-t border-slate-200"
-                style={{ color: accent }}>
-                <span>TOTAL</span>
-                <span>{fmt(offer.total)} {offer.currency}</span>
+              <div className="flex justify-between items-center pt-3 border-t border-slate-200">
+                <span className="text-xl font-bold" style={{ color: accent }}>TOTAL</span>
+                <div className="text-right">
+                  {showDiscount ? (
+                    <>
+                      <div className="text-sm text-slate-400 line-through font-medium">{fmt(offer.total)} {offer.currency}</div>
+                      <div className="text-xl font-bold" style={{ color: accent }}>{fmt(discountedTotal)} {offer.currency}</div>
+                      <div className="text-xs font-semibold mt-0.5" style={{ color: accent }}>
+                        {offer.urgency_discount_type === 'percent'
+                          ? `${offer.urgency_discount_value}% reducere aplicată`
+                          : `${fmt(offer.urgency_discount_value)} ${offer.currency} reducere aplicată`}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-xl font-bold" style={{ color: accent }}>{fmt(offer.total)} {offer.currency}</div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
