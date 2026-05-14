@@ -162,7 +162,7 @@ function groupEntries(entries: TimeEntry[], by: 'day' | 'client' | 'project'): R
   for (const e of entries) {
     let key: string
     if (by === 'day') {
-      key = new Date(e.started_at).toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+      key = new Date(e.started_at).toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()
     } else if (by === 'client') {
       key = (e.client as { name: string } | null)?.name ?? 'Fără client'
     } else {
@@ -479,10 +479,17 @@ function TagPill({ tag, selected, onClick }: { tag: TimeTag; selected: boolean; 
   )
 }
 
-function StatCard({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: string }) {
+function StatCard({ label, value, sub, accent, icon }: { label: string; value: string; sub?: string; accent?: string; icon?: React.ReactNode }) {
   return (
     <div className="bg-white rounded-[20px] p-5 shadow-lg shadow-black/5">
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+      <div className="flex items-start justify-between mb-3">
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{label}</p>
+        {icon && (
+          <div className="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 shrink-0">
+            {icon}
+          </div>
+        )}
+      </div>
       <p className={`text-2xl font-bold ${accent ?? 'text-gray-900'}`}>{value}</p>
       {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
     </div>
@@ -510,8 +517,8 @@ function BarChart({
   return (
     <div className="overflow-x-auto">
       <div
-        className="flex items-end pb-7 relative gap-px"
-        style={{ height: 200, minWidth: `${buckets.length * (isWeekly ? 28 : 16)}px` }}
+        className="flex items-end pb-7 relative gap-px w-full"
+        style={{ height: 200, minWidth: buckets.length > 31 ? `${buckets.length * (isWeekly ? 28 : 16)}px` : '100%' }}
       >
         <span className="absolute top-0 right-0 text-[10px] text-slate-300">{fmtDuration(maxMins)}</span>
         {buckets.map((d, i) => {
@@ -533,7 +540,7 @@ function BarChart({
             <div
               key={i}
               className="flex-1 flex flex-col items-center justify-end group relative"
-              style={{ minWidth: isWeekly ? 24 : 12, maxWidth: isWeekly ? 40 : 20 }}
+              style={{ minWidth: isWeekly ? 24 : 8, maxWidth: buckets.length > 31 ? (isWeekly ? 40 : 20) : undefined }}
             >
               {/* Tooltip */}
               {d.mins > 0 && (
@@ -974,11 +981,18 @@ export default function TimeTracker({
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <div className="p-8">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4 mb-8 flex-wrap">
-        <div>
+      {/* Header + Tabs inline */}
+      <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+        <div className="flex items-center gap-5">
           <h1 className="text-4xl font-bold text-gray-900">Pontaj</h1>
-          <p className="text-gray-500 text-sm mt-1">Urmărește orele lucrate și generează facturi</p>
+          <div className="flex gap-1 bg-gray-100 rounded-full p-1">
+            {(['timer','analytics','settings'] as const).map(t => (
+              <button key={t} onClick={() => setTab(t)}
+                className={`px-5 py-2 text-sm font-semibold rounded-full transition ${tab === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                {t === 'timer' ? 'Timer' : t === 'analytics' ? 'Rapoarte' : 'Setări'}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => exportCSV(periodEntries, tagMap, PERIOD_LABELS[period])}
@@ -998,16 +1012,6 @@ export default function TimeTracker({
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-full p-1 w-fit mb-6">
-        {(['timer','analytics','settings'] as const).map(t => (
-          <button key={t} onClick={() => setTab(t)}
-            className={`px-5 py-2 text-sm font-semibold rounded-full transition ${tab === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-            {t === 'timer' ? 'Timer' : t === 'analytics' ? 'Rapoarte' : 'Setări'}
-          </button>
-        ))}
-      </div>
-
       {/* Period bar — shared for Timer + Rapoarte */}
       {tab !== 'settings' && <PeriodBar />}
 
@@ -1016,10 +1020,14 @@ export default function TimeTracker({
         <>
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
-            <StatCard label="Total ore" value={fmtDuration(stats.totalMins)} sub={`${stats.activeDays} zile active`} />
-            <StatCard label="Ore facturabile" value={fmtDuration(stats.billMins)} accent="text-[#5a8a00]" sub={`${stats.billRatio.toFixed(0)}% din total`} />
-            <StatCard label="Venit estimat" value={fmtMoney(stats.billValue, settings?.default_currency ?? 'RON')} accent="text-emerald-600" />
-            <StatCard label="Medie / zi activă" value={fmtDuration(Math.round(stats.avgMins))} sub="pe zilele cu pontaj" />
+            <StatCard label="Total ore" value={fmtDuration(stats.totalMins)} sub={`${stats.activeDays} zile active`}
+              icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
+            <StatCard label="Ore facturabile" value={fmtDuration(stats.billMins)} accent="text-[#5a8a00]" sub={`${stats.billRatio.toFixed(0)}% din total`}
+              icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
+            <StatCard label="Venit estimat" value={fmtMoney(stats.billValue, settings?.default_currency ?? 'RON')} accent="text-emerald-600"
+              icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
+            <StatCard label="Medie / zi activă" value={fmtDuration(Math.round(stats.avgMins))} sub="pe zilele cu pontaj"
+              icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>} />
           </div>
 
           {/* Running timer */}
@@ -1251,10 +1259,10 @@ export default function TimeTracker({
                 return (
                   <div key={groupLabel}>
                     <div className="flex items-center justify-between mb-2 px-1">
-                      <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide capitalize">{groupLabel}</h3>
-                      <div className="flex items-center gap-3">
-                        {groupValue > 0 && <span className="text-xs text-emerald-600 font-semibold">{fmtMoney(groupValue, settings?.default_currency ?? 'RON')}</span>}
-                        <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">{fmtDuration(groupMins)}</span>
+                      <h3 className="text-xs font-bold text-gray-500 tracking-wider">{groupLabel}</h3>
+                      <div className="flex items-center gap-4">
+                        {groupValue > 0 && <span className="text-xs text-emerald-600 font-bold">{fmtMoney(groupValue, settings?.default_currency ?? 'RON')}</span>}
+                        <span className="text-xs font-bold text-gray-600">{fmtDuration(groupMins)}</span>
                       </div>
                     </div>
                     <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 divide-y divide-gray-50 overflow-hidden">
@@ -1434,10 +1442,14 @@ export default function TimeTracker({
 
           {/* Summary */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard label="Total ore" value={fmtDuration(analyticsStats.totalMins)} sub={`${analyticsStats.activeDays} zile active`} />
-            <StatCard label="Ore facturabile" value={fmtDuration(analyticsStats.billMins)} accent="text-[#5a8a00]" sub={`${analyticsStats.billRatio.toFixed(0)}% din total`} />
-            <StatCard label="Venit estimat" value={fmtMoney(analyticsStats.billValue, settings?.default_currency ?? 'RON')} accent="text-emerald-600" />
-            <StatCard label="Medie / zi activă" value={fmtDuration(Math.round(analyticsStats.avgMins))} />
+            <StatCard label="Total ore" value={fmtDuration(analyticsStats.totalMins)} sub={`${analyticsStats.activeDays} zile active`}
+              icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
+            <StatCard label="Ore facturabile" value={fmtDuration(analyticsStats.billMins)} accent="text-[#5a8a00]" sub={`${analyticsStats.billRatio.toFixed(0)}% din total`}
+              icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
+            <StatCard label="Venit estimat" value={fmtMoney(analyticsStats.billValue, settings?.default_currency ?? 'RON')} accent="text-emerald-600"
+              icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
+            <StatCard label="Medie / zi activă" value={fmtDuration(Math.round(analyticsStats.avgMins))}
+              icon={<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>} />
           </div>
 
           {/* Bar chart */}
