@@ -140,6 +140,8 @@ export interface Project {
   description: string | null
   status: ProjectStatus
   budget: number | null
+  budget_type: 'fixed' | 'hourly'
+  hourly_rate: number
   currency: string
   start_date: string | null
   deadline: string | null

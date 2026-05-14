@@ -37,7 +37,9 @@ export async function createProjectAction(state: ProjectState, formData: FormDat
   if (!name) return { error: 'Numele proiectului este obligatoriu.' }
 
   const clientId = formData.get('client_id') as string
+  const budgetType = (formData.get('budget_type') as string) || 'fixed'
   const budget = formData.get('budget') as string
+  const hourlyRate = formData.get('hourly_rate') as string
   const startDate = formData.get('start_date') as string
   const deadline = formData.get('deadline') as string
 
@@ -51,7 +53,9 @@ export async function createProjectAction(state: ProjectState, formData: FormDat
     name,
     description: (formData.get('description') as string) || null,
     status: (formData.get('status') as string) || 'active',
-    budget: budget ? parseFloat(budget) : null,
+    budget_type: budgetType,
+    budget: budgetType === 'fixed' && budget ? parseFloat(budget) : null,
+    hourly_rate: budgetType === 'hourly' && hourlyRate ? parseFloat(hourlyRate) : 0,
     currency: (formData.get('currency') as string) || 'RON',
     start_date: startDate || null,
     deadline: deadline || null,
@@ -76,7 +80,9 @@ export async function updateProjectAction(state: ProjectState, formData: FormDat
   if (!name) return { error: 'Numele proiectului este obligatoriu.' }
 
   const clientId = formData.get('client_id') as string
+  const budgetType = (formData.get('budget_type') as string) || 'fixed'
   const budget = formData.get('budget') as string
+  const hourlyRate = formData.get('hourly_rate') as string
   const startDate = formData.get('start_date') as string
   const deadline = formData.get('deadline') as string
 
@@ -91,7 +97,9 @@ export async function updateProjectAction(state: ProjectState, formData: FormDat
       name,
       description: (formData.get('description') as string) || null,
       status: formData.get('status') as string,
-      budget: budget ? parseFloat(budget) : null,
+      budget_type: budgetType,
+      budget: budgetType === 'fixed' && budget ? parseFloat(budget) : null,
+      hourly_rate: budgetType === 'hourly' && hourlyRate ? parseFloat(hourlyRate) : 0,
       currency: (formData.get('currency') as string) || 'RON',
       start_date: startDate || null,
       deadline: deadline || null,

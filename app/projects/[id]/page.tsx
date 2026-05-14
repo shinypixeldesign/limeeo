@@ -77,7 +77,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const [projectRes, tasksRes, membersRes, profileRes] = await Promise.all([
+  const [projectRes, tasksRes, membersRes, profileRes, timeEntriesRes] = await Promise.all([
     supabase
       .from('projects')
       .select('*, client:clients(id, name, company, email, phone)')
@@ -96,6 +96,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       .eq('owner_user_id', user!.id)
       .order('invited_at', { ascending: false }),
     supabase.from('profiles').select('plan').eq('id', user!.id).single(),
+    supabase
+      .from('time_entries')
+      .select('duration_minutes, hourly_rate, currency')
+      .eq('project_id', id)
+      .eq('user_id', user!.id)
+      .not('ended_at', 'is', null),
   ])
 
   if (!projectRes.data) notFound()
@@ -110,6 +116,13 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const completedTasks = tasks.filter(t => t.is_completed).length
   const totalTasks = tasks.length
   const progressPct = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+
+  // Date pontaj pentru proiecte pe oră
+  const timeEntries = timeEntriesRes.data ?? []
+  const totalMinutes = timeEntries.reduce((s, e) => s + (e.duration_minutes ?? 0), 0)
+  const totalHours = totalMinutes / 60
+  const trackedCost = timeEntries.reduce((s, e) => s + ((e.duration_minutes ?? 0) / 60) * (e.hourly_rate ?? 0), 0)
+  const isHourly = project.budget_type === 'hourly'
 
   // SVG donut dimensions
   const r = 56
@@ -274,19 +287,57 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
 
           {/* Financial Health Card */}
-          {project.budget && (
+          {(project.budget || isHourly) && (
             <div className="bg-white rounded-[24px] p-6 shadow-lg shadow-black/5">
-              <h3 className="text-xs font-bold text-gray-900 mb-5 uppercase tracking-wide">Financiar</h3>
-              <div className="p-4 bg-green-50 rounded-[16px]">
-                <div className="flex items-center gap-2 mb-1">
-                  <DollarSign size={15} className="text-green-600" />
-                  <p className="text-xs font-medium text-green-700">Valoare proiect</p>
-                </div>
-                <p className="text-2xl font-bold text-green-900">
-                  {project.budget.toLocaleString('ro-RO')}
-                  <span className="text-base font-semibold ml-1">{project.currency}</span>
-                </p>
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wide">Financiar</h3>
+                <Link href="/time" className="text-xs font-semibold text-[#acff55] hover:opacity-80 transition">
+                  {isHourly ? '+ Adaugă pontaj →' : 'Pontaj →'}
+                </Link>
               </div>
+
+              {isHourly ? (
+                <div className="space-y-3">
+                  {/* Tarif orar */}
+                  <div className="p-4 bg-gray-50 rounded-[14px]">
+                    <p className="text-xs font-medium text-gray-500 mb-1">Tarif orar</p>
+                    <p className="text-xl font-bold text-gray-900">
+                      {(project.hourly_rate ?? 0).toLocaleString('ro-RO')}
+                      <span className="text-sm font-medium ml-1">{project.currency}/h</span>
+                    </p>
+                  </div>
+                  {/* Ore pontate */}
+                  <div className="p-4 bg-blue-50 rounded-[14px]">
+                    <p className="text-xs font-medium text-blue-700 mb-1">Ore pontate</p>
+                    <p className="text-xl font-bold text-blue-900">
+                      {Math.floor(totalHours)}h {Math.round((totalHours % 1) * 60)}m
+                    </p>
+                    <p className="text-xs text-blue-600 mt-0.5">{timeEntries.length} înregistrări</p>
+                  </div>
+                  {/* Cost total */}
+                  <div className="p-4 bg-green-50 rounded-[14px]">
+                    <div className="flex items-center gap-2 mb-1">
+                      <DollarSign size={14} className="text-green-600" />
+                      <p className="text-xs font-medium text-green-700">Cost total acumulat</p>
+                    </div>
+                    <p className="text-xl font-bold text-green-900">
+                      {trackedCost.toLocaleString('ro-RO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      <span className="text-sm font-medium ml-1">{project.currency}</span>
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 bg-green-50 rounded-[16px]">
+                  <div className="flex items-center gap-2 mb-1">
+                    <DollarSign size={15} className="text-green-600" />
+                    <p className="text-xs font-medium text-green-700">Valoare proiect (fix)</p>
+                  </div>
+                  <p className="text-2xl font-bold text-green-900">
+                    {project.budget!.toLocaleString('ro-RO')}
+                    <span className="text-base font-semibold ml-1">{project.currency}</span>
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

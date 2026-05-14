@@ -55,7 +55,36 @@ export async function toggleTaskAction(taskId: string, projectId: string, comple
     .eq('id', taskId)
     .eq('user_id', user.id)
 
+  // Auto-finalizare: dacă toate taskurile sunt bifate → proiectul devine Finalizat
+  // Dacă cel puțin unul e debifat → proiectul revine la Activ (dacă era Finalizat)
+  const { data: allTasks } = await supabase
+    .from('project_tasks')
+    .select('is_completed')
+    .eq('project_id', projectId)
+    .eq('user_id', user.id)
+
+  if (allTasks && allTasks.length > 0) {
+    const allDone = allTasks.every(t => t.is_completed)
+    if (allDone) {
+      await supabase
+        .from('projects')
+        .update({ status: 'completed' })
+        .eq('id', projectId)
+        .eq('user_id', user.id)
+        .in('status', ['active', 'paused', 'draft']) // nu suprascrie 'cancelled'
+    } else {
+      // Dacă există taskuri nedone și proiectul era Finalizat → îl reactivăm
+      await supabase
+        .from('projects')
+        .update({ status: 'active' })
+        .eq('id', projectId)
+        .eq('user_id', user.id)
+        .eq('status', 'completed')
+    }
+  }
+
   revalidatePath(`/projects/${projectId}`)
+  revalidatePath('/projects')
 }
 
 export async function updateTaskAction(
