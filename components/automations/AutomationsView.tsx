@@ -272,7 +272,6 @@ export default function AutomationsView({ rules }: Props) {
         </svg>
         <p className="text-sm text-indigo-700">
           Regulile active sunt verificate zilnic la ora 08:00. Emailurile se trimit o singură dată per document/regulă.
-          Necesită configurarea <code className="bg-indigo-100 px-1 rounded">RESEND_API_KEY</code> și <code className="bg-indigo-100 px-1 rounded">CRON_SECRET</code> în <code className="bg-indigo-100 px-1 rounded">.env.local</code>.
         </p>
       </div>
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
 
 interface AutomationRule {
@@ -49,7 +49,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Neautorizat.' }, { status: 401 })
   }
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const resendKey = process.env.RESEND_API_KEY
   const resend = resendKey ? new Resend(resendKey) : null
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'

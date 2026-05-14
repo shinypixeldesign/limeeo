@@ -60,7 +60,7 @@ export async function POST() {
       return daysLeft >= 0 && daysLeft <= 14
     })
 
-    const context = `Ești un asistent AI pentru freelanceri, integrat în Limeeo CRM. Astăzi este ${now.toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}.`
+    const context = `Ești un asistent AI pentru freelanceri, integrat în Limeeo CRM. Astăzi este ${now.toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}.
 
 DATE CURENTE ALE UTILIZATORULUI:
 - Clienți activi: ${clients.filter(c => c.status === 'active').length} din ${clients.length} total
