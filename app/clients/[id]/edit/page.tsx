@@ -22,30 +22,26 @@ export default async function EditClientPage({ params }: { params: Promise<{ id:
   const client = data as Client
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-8">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-8">
+      <div className="mb-10">
         <Link
           href={`/clients/${client.id}`}
-          className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
+          <span className="text-sm font-medium">Înapoi la {client.name}</span>
         </Link>
-        <div>
-          <p className="text-xs text-slate-400 font-medium">{client.name}</p>
-          <h1 className="text-2xl font-bold text-slate-900">Editează client</h1>
-        </div>
+        <h1 className="text-4xl font-bold text-gray-900">Editează Profilul Companiei</h1>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <ClientForm
-          action={updateClientAction}
-          client={client}
-          cancelHref={`/clients/${client.id}`}
-        />
-      </div>
+      <ClientForm
+        action={updateClientAction}
+        client={client}
+        cancelHref={`/clients/${client.id}`}
+      />
     </div>
   )
 }
