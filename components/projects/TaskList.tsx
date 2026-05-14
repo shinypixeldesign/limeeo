@@ -163,19 +163,19 @@ export default function TaskList({ projectId, initialTasks, members }: TaskListP
   /* ── render ── */
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div className="bg-white rounded-[24px] shadow-lg shadow-black/5 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+      <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
         <div className="flex items-center gap-3">
-          <h3 className="font-semibold text-slate-900">Taskuri</h3>
+          <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wide">Task Engine</h3>
           {totalAll > 0 && (
-            <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+            <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
               {doneAll}/{totalAll}
             </span>
           )}
         </div>
         {totalAll > 0 && (
-          <span className={`text-xs font-semibold ${pct === 100 ? 'text-emerald-600' : 'text-slate-400'}`}>
+          <span className={`text-xs font-bold ${pct === 100 ? 'text-emerald-600' : 'text-gray-400'}`}>
             {pct}%
           </span>
         )}
@@ -183,19 +183,19 @@ export default function TaskList({ projectId, initialTasks, members }: TaskListP
 
       {/* Progress bar */}
       {totalAll > 0 && (
-        <div className="h-1 bg-slate-100">
+        <div className="h-1 bg-gray-100">
           <div
-            className={`h-1 transition-all duration-500 ${pct === 100 ? 'bg-emerald-500' : 'bg-indigo-500'}`}
+            className={`h-1 transition-all duration-500 ${pct === 100 ? 'bg-emerald-500' : 'bg-[#acff55]'}`}
             style={{ width: `${pct}%` }}
           />
         </div>
       )}
 
       {/* Task list */}
-      <div className="divide-y divide-slate-50">
+      <div className="divide-y divide-gray-50">
         {totalParent === 0 && (
-          <div className="px-6 py-8 text-center">
-            <p className="text-sm text-slate-400">Niciun task încă. Adaugă primul task mai jos.</p>
+          <div className="px-6 py-10 text-center">
+            <p className="text-sm text-gray-400">Niciun task încă. Adaugă primul task mai jos.</p>
           </div>
         )}
 
@@ -214,7 +214,7 @@ export default function TaskList({ projectId, initialTasks, members }: TaskListP
       </div>
 
       {/* Add parent task */}
-      <div className="border-t border-slate-100 bg-slate-50 px-6 py-4">
+      <div className="border-t border-gray-100 bg-gray-50/50 px-6 py-4">
         <AddTaskForm
           placeholder="Adaugă task nou..."
           members={members}
@@ -263,7 +263,7 @@ function ParentTaskRow({
   return (
     <div className={`${task.is_completed ? 'opacity-60' : ''}`}>
       {/* Parent row */}
-      <div className="flex items-start gap-2.5 px-6 py-3 group hover:bg-slate-50 transition">
+      <div className="flex items-start gap-2.5 px-6 py-3 group hover:bg-gray-50 transition">
         {/* Expand toggle (only if has subtasks) */}
         <button
           type="button"
@@ -283,8 +283,8 @@ function ParentTaskRow({
         <button
           type="button"
           onClick={() => onToggle(task)}
-          className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition ${
-            task.is_completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 hover:border-indigo-400'
+          className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition ${
+            task.is_completed ? 'bg-[#acff55] border-[#acff55] text-black' : 'border-gray-300 hover:border-[#acff55]'
           }`}
         >
           {task.is_completed && (
@@ -304,11 +304,11 @@ function ParentTaskRow({
               onChange={e => setEditTitle(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') saveTitle(); if (e.key === 'Escape') { setEditTitle(task.title); setEditing(false) } }}
               onBlur={saveTitle}
-              className="w-full text-sm font-medium border border-indigo-300 rounded-lg px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+              className="w-full text-sm font-medium border border-indigo-300 rounded-lg px-2.5 py-1 focus:outline-none focus:ring-2 focus:border-[#acff55] bg-white"
             />
           ) : (
             <p
-              className={`text-sm font-medium cursor-pointer ${task.is_completed ? 'line-through text-slate-400' : 'text-slate-800 hover:text-indigo-600'} transition`}
+              className={`text-sm font-medium cursor-pointer ${task.is_completed ? 'line-through text-gray-400' : 'text-gray-800 hover:text-black'} transition`}
               onDoubleClick={() => { setEditTitle(task.title); setEditing(true) }}
               title="Dublu-click pentru editare"
             >
@@ -328,7 +328,7 @@ function ParentTaskRow({
           <button
             type="button"
             onClick={() => { setShowAddSub(v => !v); setExpanded(true) }}
-            className="w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 transition"
+            className="w-6 h-6 flex items-center justify-center rounded text-gray-400 hover:text-black hover:bg-gray-100 transition"
             title="Adaugă subtask"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -384,7 +384,7 @@ function ParentTaskRow({
             <button
               type="button"
               onClick={() => setShowAddSub(true)}
-              className="w-full text-left pl-4 pr-6 py-1.5 text-xs text-slate-400 hover:text-indigo-500 hover:bg-indigo-50/50 transition flex items-center gap-1.5"
+              className="w-full text-left pl-4 pr-6 py-1.5 text-xs text-gray-400 hover:text-black hover:bg-gray-50 transition flex items-center gap-1.5"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -423,13 +423,13 @@ function SubtaskRow({
   }
 
   return (
-    <div className={`flex items-start gap-2.5 pl-4 pr-6 py-2.5 group hover:bg-slate-50/70 transition ${task.is_completed ? 'opacity-60' : ''}`}>
+    <div className={`flex items-start gap-2.5 pl-4 pr-6 py-2.5 group hover:bg-gray-50/70 transition ${task.is_completed ? 'opacity-60' : ''}`}>
       {/* Checkbox */}
       <button
         type="button"
         onClick={() => onToggle(task)}
-        className={`mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition ${
-          task.is_completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 hover:border-indigo-400'
+        className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition ${
+          task.is_completed ? 'bg-[#acff55] border-[#acff55] text-black' : 'border-gray-300 hover:border-[#acff55]'
         }`}
       >
         {task.is_completed && (
@@ -449,11 +449,11 @@ function SubtaskRow({
             onChange={e => setEditTitle(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') saveTitle(); if (e.key === 'Escape') { setEditTitle(task.title); setEditing(false) } }}
             onBlur={saveTitle}
-            className="w-full text-xs border border-indigo-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+            className="w-full text-xs border border-indigo-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:border-[#acff55] bg-white"
           />
         ) : (
           <p
-            className={`text-xs cursor-pointer ${task.is_completed ? 'line-through text-slate-400' : 'text-slate-700 hover:text-indigo-600'} transition`}
+            className={`text-xs cursor-pointer ${task.is_completed ? 'line-through text-gray-400' : 'text-gray-700 hover:text-black'} transition`}
             onDoubleClick={() => { setEditTitle(task.title); setEditing(true) }}
             title="Dublu-click pentru editare"
           >
@@ -543,7 +543,7 @@ function TaskMeta({
                   <button
                     type="button"
                     onClick={() => { onUpdate(task.id, { assignee_email: null }); setAssigneeOpen(false) }}
-                    className="w-full text-left px-3 py-1.5 text-xs text-slate-500 hover:bg-slate-50 transition"
+                    className="w-full text-left px-3 py-1.5 text-xs text-slate-500 hover:bg-gray-50 transition"
                   >
                     — Fără asignare
                   </button>
@@ -553,7 +553,7 @@ function TaskMeta({
                     key={m.id}
                     type="button"
                     onClick={() => { onUpdate(task.id, { assignee_email: m.invited_email }); setAssigneeOpen(false) }}
-                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 hover:bg-indigo-50 transition ${task.assignee_email === m.invited_email ? 'text-indigo-600 font-medium bg-indigo-50/50' : 'text-slate-700'}`}
+                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 hover:bg-gray-50 transition ${task.assignee_email === m.invited_email ? 'text-black font-medium bg-[#acff55]/10' : 'text-slate-700'}`}
                   >
                     <span className={`w-5 h-5 rounded-full ${avatarColor(m.invited_email)} flex items-center justify-center shrink-0`}>
                       <span className="text-[9px] font-bold text-white">{memberInitials(m.invited_email)}</span>
@@ -565,7 +565,7 @@ function TaskMeta({
                       </span>
                     )}
                     {task.assignee_email === m.invited_email && (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 shrink-0 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 shrink-0 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     )}
@@ -596,7 +596,7 @@ function TaskMeta({
               type="date"
               defaultValue={task.deadline ?? ''}
               onChange={e => { onUpdate(task.id, { deadline: e.target.value || null }); setDeadlineOpen(false) }}
-              className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:border-[#acff55]"
             />
             {task.deadline && (
               <button
@@ -663,7 +663,7 @@ function AddTaskForm({
             if (e.key === 'Escape' && onCancel) onCancel()
           }}
           placeholder={placeholder}
-          className={`flex-1 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white placeholder:text-slate-300 transition ${compact ? 'text-xs' : 'text-sm'}`}
+          className={`flex-1 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:border-[#acff55] focus:border-transparent bg-white placeholder:text-slate-300 transition ${compact ? 'text-xs' : 'text-sm'}`}
         />
         {/* Extra options toggle */}
         <button
@@ -680,7 +680,7 @@ function AddTaskForm({
           type="button"
           onClick={submit}
           disabled={!title.trim()}
-          className={`px-3.5 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition ${compact ? 'text-xs' : 'text-sm'}`}
+          className={`px-3.5 py-2 rounded-full bg-[#acff55] hover:bg-[#9fee44] text-black font-bold disabled:opacity-40 disabled:cursor-not-allowed transition ${compact ? 'text-xs' : 'text-sm'}`}
         >
           {buttonLabel}
         </button>
@@ -698,7 +698,7 @@ function AddTaskForm({
             <select
               value={assignee}
               onChange={e => setAssignee(e.target.value)}
-              className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-slate-700"
+              className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:border-[#acff55] bg-white text-slate-700"
             >
               <option value="">👤 Asignează</option>
               {availableMembers.map(m => (
@@ -712,7 +712,7 @@ function AddTaskForm({
             type="date"
             value={deadline}
             onChange={e => setDeadline(e.target.value)}
-            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-slate-700"
+            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:border-[#acff55] bg-white text-slate-700"
           />
         </div>
       )}
