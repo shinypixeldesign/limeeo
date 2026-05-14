@@ -481,10 +481,10 @@ function TagPill({ tag, selected, onClick }: { tag: TimeTag; selected: boolean; 
 
 function StatCard({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: string }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5">
-      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">{label}</p>
-      <p className={`text-2xl font-bold ${accent ?? 'text-slate-900'}`}>{value}</p>
-      {sub && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
+    <div className="bg-white rounded-[20px] p-5 shadow-lg shadow-black/5">
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+      <p className={`text-2xl font-bold ${accent ?? 'text-gray-900'}`}>{value}</p>
+      {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
     </div>
   )
 }
@@ -563,7 +563,7 @@ function BarChart({
                           <div key={si} className="w-full" style={{ height: `${seg.heightPx}px`, backgroundColor: seg.color }} />
                         ))}
                       </div>
-                    : <div className="w-full h-full bg-indigo-500 rounded-t" />
+                    : <div className="w-full h-full rounded-t" style={{ backgroundColor: '#acff55' }} />
                 )}
                 {totalH === 0 && <div className="w-full h-px bg-slate-100" />}
               </div>
@@ -598,50 +598,45 @@ function EditEntryRow({
   const [editTags, setEditTags]         = useState<string[]>(entry.tag_ids ?? [])
   const [editBillable, setEditBillable] = useState(entry.is_billable)
   const filteredProjects = editClientId ? projects.filter(p => p.client_id === editClientId) : projects
+  const inp = 'w-full rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition'
 
   return (
-    <form onSubmit={onSave} className="px-5 py-4 bg-indigo-50 border-l-4 border-indigo-400 space-y-3">
+    <form onSubmit={onSave} className="px-5 py-4 bg-[#acff55]/8 border-l-4 border-[#acff55] space-y-3">
       <input type="hidden" name="id" value={entry.id} />
       <input type="hidden" name="is_billable" value={String(editBillable)} />
       <input name="description" type="text" defaultValue={entry.description ?? ''} placeholder="Descriere"
-        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        className={inp} />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Start</label>
-          <input name="started_at" type="datetime-local" defaultValue={toDatetimeLocal(entry.started_at)}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          <label className="block text-xs font-medium text-gray-500 mb-1">Start</label>
+          <input name="started_at" type="datetime-local" defaultValue={toDatetimeLocal(entry.started_at)} className={inp} />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Stop</label>
-          <input name="ended_at" type="datetime-local" defaultValue={entry.ended_at ? toDatetimeLocal(entry.ended_at) : ''}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          <label className="block text-xs font-medium text-gray-500 mb-1">Stop</label>
+          <input name="ended_at" type="datetime-local" defaultValue={entry.ended_at ? toDatetimeLocal(entry.ended_at) : ''} className={inp} />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Tarif/h</label>
-          <input name="hourly_rate" type="text" inputMode="decimal" defaultValue={String(entry.hourly_rate)}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          <label className="block text-xs font-medium text-gray-500 mb-1">Tarif/h</label>
+          <input name="hourly_rate" type="text" inputMode="decimal" defaultValue={String(entry.hourly_rate)} className={inp} />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Monedă</label>
-          <select name="currency" defaultValue={entry.currency}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <label className="block text-xs font-medium text-gray-500 mb-1">Monedă</label>
+          <select name="currency" defaultValue={entry.currency} className={inp}>
             {['RON','EUR','USD','GBP'].map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Client</label>
-          <select name="client_id" value={editClientId} onChange={e => setEditClientId(e.target.value)}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <label className="block text-xs font-medium text-gray-500 mb-1">Client</label>
+          <select name="client_id" value={editClientId} onChange={e => setEditClientId(e.target.value)} className={inp}>
             <option value="">— Fără client —</option>
             {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Proiect</label>
-          <select name="project_id" defaultValue={entry.project_id ?? ''}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <label className="block text-xs font-medium text-gray-500 mb-1">Proiect</label>
+          <select name="project_id" defaultValue={entry.project_id ?? ''} className={inp}>
             <option value="">— Fără proiect —</option>
             {filteredProjects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
@@ -652,7 +647,7 @@ function EditEntryRow({
           {tags.map(t => (
             <button key={t.id} type="button"
               onClick={() => setEditTags(prev => prev.includes(t.id) ? prev.filter(x => x !== t.id) : [...prev, t.id])}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition border ${editTags.includes(t.id) ? 'text-white border-transparent' : 'text-slate-600 bg-white border-slate-200'}`}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition border ${editTags.includes(t.id) ? 'text-white border-transparent' : 'text-gray-600 bg-white border-gray-200'}`}
               style={editTags.includes(t.id) ? { backgroundColor: t.color, borderColor: t.color } : {}}>
               {t.name}
             </button>
@@ -661,16 +656,16 @@ function EditEntryRow({
         </div>
       )}
       <div className="flex items-center gap-4">
-        <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
           <input type="checkbox" checked={editBillable} onChange={e => setEditBillable(e.target.checked)}
-            className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+            className="rounded border-gray-300" />
           Facturabil
         </label>
         <div className="flex gap-2 ml-auto">
           <button type="button" onClick={onCancel}
-            className="rounded-lg px-4 py-2 text-sm text-slate-600 hover:bg-white transition">Anulează</button>
+            className="rounded-full px-4 py-2 text-sm font-semibold text-gray-600 border border-gray-200 hover:bg-white transition">Anulează</button>
           <button type="submit" disabled={isPending}
-            className="rounded-lg bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-60">
+            className="rounded-full bg-[#acff55] hover:bg-[#9fee44] px-5 py-2 text-sm font-bold text-black transition disabled:opacity-60">
             {isPending ? 'Se salvează...' : 'Salvează'}
           </button>
         </div>
@@ -956,10 +951,10 @@ export default function TimeTracker({
 
   const PeriodBar = () => (
     <div className="flex items-center gap-2 flex-wrap mb-6">
-      <div className="flex gap-0.5 bg-slate-100 rounded-lg p-0.5 flex-wrap">
+      <div className="flex gap-0.5 bg-gray-100 rounded-full p-1 flex-wrap">
         {(Object.keys(PERIOD_LABELS) as PeriodKey[]).map(pk => (
           <button key={pk} onClick={() => setPeriod(pk)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition whitespace-nowrap ${period === pk ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+            className={`px-3 py-1.5 text-xs font-semibold rounded-full transition whitespace-nowrap ${period === pk ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
             {PERIOD_LABELS[pk]}
           </button>
         ))}
@@ -967,10 +962,10 @@ export default function TimeTracker({
       {period === 'custom' && (
         <div className="flex items-center gap-2">
           <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          <span className="text-slate-400 text-xs">→</span>
+            className="rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs focus:outline-none focus:border-[#acff55] focus:bg-white transition" />
+          <span className="text-gray-400 text-xs">→</span>
           <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            className="rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs focus:outline-none focus:border-[#acff55] focus:bg-white transition" />
         </div>
       )}
     </div>
@@ -980,21 +975,21 @@ export default function TimeTracker({
   return (
     <div className="p-8">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
+      <div className="flex items-start justify-between gap-4 mb-8 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Pontaj</h1>
-          <p className="text-slate-500 text-sm mt-0.5">Urmărește orele lucrate și generează facturi</p>
+          <h1 className="text-4xl font-bold text-gray-900">Pontaj</h1>
+          <p className="text-gray-500 text-sm mt-1">Urmărește orele lucrate și generează facturi</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => exportCSV(periodEntries, tagMap, PERIOD_LABELS[period])}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition">
+            className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:border-gray-300 hover:shadow transition shadow-sm">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
             Export CSV
           </button>
           <button onClick={() => { setShowManual(v => !v); setTab('timer') }}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">
+            className="inline-flex items-center gap-2 rounded-full bg-[#acff55] hover:bg-[#9fee44] px-5 py-2.5 text-sm font-bold text-black transition shadow-sm shadow-[#acff55]/30">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
@@ -1004,10 +999,10 @@ export default function TimeTracker({
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit mb-5">
+      <div className="flex gap-1 bg-gray-100 rounded-full p-1 w-fit mb-6">
         {(['timer','analytics','settings'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-5 py-2 text-sm font-medium rounded-lg transition ${tab === t ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+            className={`px-5 py-2 text-sm font-semibold rounded-full transition ${tab === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
             {t === 'timer' ? 'Timer' : t === 'analytics' ? 'Rapoarte' : 'Setări'}
           </button>
         ))}
@@ -1022,26 +1017,24 @@ export default function TimeTracker({
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
             <StatCard label="Total ore" value={fmtDuration(stats.totalMins)} sub={`${stats.activeDays} zile active`} />
-            <StatCard label="Ore facturabile" value={fmtDuration(stats.billMins)} accent="text-indigo-600" sub={`${stats.billRatio.toFixed(0)}% din total`} />
+            <StatCard label="Ore facturabile" value={fmtDuration(stats.billMins)} accent="text-[#5a8a00]" sub={`${stats.billRatio.toFixed(0)}% din total`} />
             <StatCard label="Venit estimat" value={fmtMoney(stats.billValue, settings?.default_currency ?? 'RON')} accent="text-emerald-600" />
             <StatCard label="Medie / zi activă" value={fmtDuration(Math.round(stats.avgMins))} sub="pe zilele cu pontaj" />
           </div>
 
           {/* Running timer */}
-          <div className={`mb-5 rounded-xl border-2 p-5 ${running ? 'border-indigo-400 bg-indigo-50' : 'border-slate-200 bg-white'}`}>
+          <div className={`mb-5 rounded-[20px] border-2 p-6 transition-colors ${running ? 'border-[#acff55] bg-[#acff55]/8' : 'border-gray-100 bg-white shadow-lg shadow-black/5'}`}>
             {running ? (
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-3 h-3 rounded-full bg-indigo-500 animate-pulse shrink-0" />
+                  <div className="w-3 h-3 rounded-full bg-[#acff55] animate-pulse shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-3xl font-mono font-bold text-indigo-700 tabular-nums">{elapsed}</p>
-                    {/* Descriere */}
+                    <p className="text-3xl font-mono font-bold text-gray-900 tabular-nums">{elapsed}</p>
                     {running.description && (
-                      <p className="text-sm font-semibold text-indigo-800 mt-1 truncate">{running.description}</p>
+                      <p className="text-sm font-semibold text-gray-800 mt-1 truncate">{running.description}</p>
                     )}
-                    {/* Client › Proiect */}
                     {(running.client_id || running.project_id) && (
-                      <p className="text-xs text-indigo-500 mt-0.5 flex items-center gap-1 truncate">
+                      <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-1 truncate">
                         {running.client_id && (
                           <span>{clients.find(c => c.id === running.client_id)?.name ?? ''}</span>
                         )}
@@ -1051,7 +1044,6 @@ export default function TimeTracker({
                         )}
                       </p>
                     )}
-                    {/* Taguri */}
                     {(running.tag_ids ?? []).length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-1.5">
                         {(running.tag_ids ?? []).map(tid => {
@@ -1066,9 +1058,8 @@ export default function TimeTracker({
                         })}
                       </div>
                     )}
-                    {/* Tarif */}
                     {running.hourly_rate > 0 && (
-                      <p className="text-[11px] text-indigo-400 mt-1">
+                      <p className="text-[11px] text-gray-500 mt-1">
                         {running.hourly_rate} {running.currency}/h
                         {' · '}
                         {fmtMoney(
@@ -1080,7 +1071,7 @@ export default function TimeTracker({
                   </div>
                 </div>
                 <button onClick={handleStop} disabled={isPending}
-                  className="inline-flex items-center gap-2 rounded-lg bg-red-600 hover:bg-red-700 px-5 py-2.5 text-sm font-semibold text-white transition disabled:opacity-60 shrink-0">
+                  className="inline-flex items-center gap-2 rounded-full bg-red-500 hover:bg-red-600 px-6 py-2.5 text-sm font-bold text-white transition disabled:opacity-60 shrink-0 shadow-sm">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <rect x="6" y="6" width="12" height="12" rx="1" />
                   </svg>
@@ -1093,35 +1084,35 @@ export default function TimeTracker({
                   <input value={desc} onChange={e => setDesc(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') handleStart() }}
                     placeholder="Ce lucrezi acum?"
-                    className="flex-1 min-w-48 rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    className="flex-1 min-w-48 rounded-[12px] border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:border-[#acff55] focus:bg-white transition" />
                   <button onClick={handleStart} disabled={isPending}
-                    className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white transition disabled:opacity-60 shrink-0">
+                    className="inline-flex items-center gap-2 rounded-full bg-[#acff55] hover:bg-[#9fee44] px-6 py-2.5 text-sm font-bold text-black transition disabled:opacity-60 shrink-0 shadow-sm shadow-[#acff55]/30">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                     Start
                   </button>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <select value={clientId} onChange={e => handleClientChange(e.target.value)}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    className="rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition">
                     <option value="">Client</option>
                     {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                   <select value={projectId} onChange={e => setProjectId(e.target.value)}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    className="rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition">
                     <option value="">Proiect</option>
                     {filteredProjects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </select>
                   <div className="flex items-center gap-1">
                     <input type="text" inputMode="decimal" value={rate} onChange={e => setRate(e.target.value)} placeholder="Tarif/h"
-                      className="w-20 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                      className="w-24 rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition" />
                     <select value={currency} onChange={e => setCurrency(e.target.value)}
-                      className="rounded-lg border border-slate-200 px-2 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                      className="rounded-[12px] border border-gray-200 bg-gray-50 px-2 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition">
                       {['RON','EUR','USD','GBP'].map(c => <option key={c}>{c}</option>)}
                     </select>
                   </div>
                   <button onClick={() => setIsBillable(v => !v)}
-                    className={`rounded-lg border px-3 py-2 text-xs font-medium transition ${isBillable ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-slate-200 bg-white text-slate-400'}`}>
-                    {isBillable ? '$ Billable' : '$ Non-bill.'}
+                    className={`rounded-full border px-4 py-2 text-xs font-semibold transition ${isBillable ? 'border-[#acff55] bg-[#acff55]/10 text-gray-800' : 'border-gray-200 bg-white text-gray-400'}`}>
+                    {isBillable ? '$ Facturabil' : '$ Non-facturabil'}
                   </button>
                 </div>
                 {tags.length > 0 && (
@@ -1135,30 +1126,30 @@ export default function TimeTracker({
 
           {/* Manual entry */}
           {showManual && (
-            <div className="mb-5 bg-white rounded-xl border border-slate-200 p-6">
-              <h2 className="text-sm font-semibold text-slate-700 mb-4">Adaugă intrare manuală</h2>
-              {manualErr && <div className="mb-3 rounded-lg bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-700">{manualErr}</div>}
+            <div className="mb-5 bg-white rounded-[20px] shadow-lg shadow-black/5 p-6">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Intrare manuală</h2>
+              {manualErr && <div className="mb-3 rounded-[12px] bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-700">{manualErr}</div>}
               <form onSubmit={handleManualSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div><label className="block text-xs font-medium text-slate-600 mb-1">Start *</label>
-                    <input name="started_at" type="datetime-local" required className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
-                  <div><label className="block text-xs font-medium text-slate-600 mb-1">Stop</label>
-                    <input name="ended_at" type="datetime-local" className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
+                  <div><label className="block text-xs font-medium text-gray-600 mb-1">Start *</label>
+                    <input name="started_at" type="datetime-local" required className="w-full rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition" /></div>
+                  <div><label className="block text-xs font-medium text-gray-600 mb-1">Stop</label>
+                    <input name="ended_at" type="datetime-local" className="w-full rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition" /></div>
                 </div>
                 <input name="description" type="text" placeholder="Descriere activitate"
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                  className="w-full rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition" />
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-600 mb-1">Client</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Client</label>
                     <select name="client_id" value={manualClientId} onChange={e => { setManualClientId(e.target.value); const r = clientRates.find(cr => cr.client_id === e.target.value); if (r) { setManualRate(String(r.hourly_rate)); setManualCurrency(r.currency) } }}
-                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                      className="w-full rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition">
                       <option value="">— Fără client —</option>
                       {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-600 mb-1">Proiect</label>
-                    <select name="project_id" className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Proiect</label>
+                    <select name="project_id" className="w-full rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition">
                       <option value="">— Fără proiect —</option>
                       {(manualClientId ? projects.filter(p => p.client_id === manualClientId) : projects).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
@@ -1166,21 +1157,21 @@ export default function TimeTracker({
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="col-span-2">
-                    <label className="block text-xs font-medium text-slate-600 mb-1">Tarif/h</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Tarif/h</label>
                     <input name="hourly_rate" type="text" inputMode="decimal" value={manualRate} onChange={e => setManualRate(e.target.value)} placeholder="0"
-                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                      className="w-full rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition" />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-600 mb-1">Monedă</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Monedă</label>
                     <select name="currency" value={manualCurrency} onChange={e => setManualCurrency(e.target.value)}
-                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                      className="w-full rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition">
                       {['RON','EUR','USD','GBP'].map(c => <option key={c}>{c}</option>)}
                     </select>
                   </div>
                 </div>
                 {tags.length > 0 && (
                   <div>
-                    <label className="block text-xs font-medium text-slate-600 mb-2">Tag-uri</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-2">Tag-uri</label>
                     <div className="flex flex-wrap gap-1.5">
                       {tags.map(t => <TagPill key={t.id} tag={t} selected={manualSelTags.includes(t.id)} onClick={() => setManualSelTags(prev => prev.includes(t.id) ? prev.filter(x => x !== t.id) : [...prev, t.id])} />)}
                     </div>
@@ -1188,8 +1179,8 @@ export default function TimeTracker({
                 )}
                 <input type="hidden" name="is_billable" value="true" />
                 <div className="flex gap-3">
-                  <button type="submit" disabled={isPending} className="rounded-lg bg-indigo-600 hover:bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white transition disabled:opacity-60">Salvează</button>
-                  <button type="button" onClick={() => setShowManual(false)} className="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 transition">Anulează</button>
+                  <button type="submit" disabled={isPending} className="rounded-full bg-[#acff55] hover:bg-[#9fee44] px-5 py-2.5 text-sm font-bold text-black transition disabled:opacity-60">Salvează</button>
+                  <button type="button" onClick={() => setShowManual(false)} className="rounded-full px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-100 border border-gray-200 transition">Anulează</button>
                 </div>
               </form>
             </div>
@@ -1198,44 +1189,44 @@ export default function TimeTracker({
           {/* Filter bar */}
           <div className="flex items-center gap-2 flex-wrap mb-4">
             <div className="relative flex-1 min-w-44">
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input value={filterSearch} onChange={e => setFilterSearch(e.target.value)} placeholder="Caută descriere..."
-                className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                className="w-full rounded-[12px] border border-gray-200 bg-gray-50 pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition" />
             </div>
             <select value={filterClient} onChange={e => { setFilterClient(e.target.value); setFilterProject('') }}
-              className={`rounded-lg border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 ${filterClient ? 'border-indigo-400 text-indigo-700' : 'border-slate-200'}`}>
+              className={`rounded-[12px] border px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:border-[#acff55] focus:bg-white transition ${filterClient ? 'border-[#acff55] text-gray-800 bg-[#acff55]/10' : 'border-gray-200'}`}>
               <option value="">Toți clienții</option>
               {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
             <select value={filterProject} onChange={e => setFilterProject(e.target.value)}
-              className={`rounded-lg border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 ${filterProject ? 'border-indigo-400 text-indigo-700' : 'border-slate-200'}`}>
+              className={`rounded-[12px] border px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:border-[#acff55] focus:bg-white transition ${filterProject ? 'border-[#acff55] text-gray-800 bg-[#acff55]/10' : 'border-gray-200'}`}>
               <option value="">Toate proiectele</option>
               {(filterClient ? projects.filter(p => p.client_id === filterClient) : projects).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
             {tags.length > 0 && (
               <select value={filterTag} onChange={e => setFilterTag(e.target.value)}
-                className={`rounded-lg border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 ${filterTag ? 'border-indigo-400 text-indigo-700' : 'border-slate-200'}`}>
+                className={`rounded-[12px] border px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:border-[#acff55] focus:bg-white transition ${filterTag ? 'border-[#acff55] text-gray-800 bg-[#acff55]/10' : 'border-gray-200'}`}>
                 <option value="">Toate tag-urile</option>
                 {tags.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
             )}
             <select value={filterBillable} onChange={e => setFilterBillable(e.target.value as 'all'|'yes'|'no')}
-              className={`rounded-lg border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 ${filterBillable !== 'all' ? 'border-indigo-400 text-indigo-700' : 'border-slate-200'}`}>
+              className={`rounded-[12px] border px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:border-[#acff55] focus:bg-white transition ${filterBillable !== 'all' ? 'border-[#acff55] text-gray-800 bg-[#acff55]/10' : 'border-gray-200'}`}>
               <option value="all">Facturabil: Toate</option>
               <option value="yes">Facturabile</option>
               <option value="no">Non-facturabile</option>
             </select>
             <select value={groupBy} onChange={e => setGroupBy(e.target.value as 'day'|'client'|'project')}
-              className="rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              className="rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition">
               <option value="day">Grupare: Zi</option>
               <option value="client">Grupare: Client</option>
               <option value="project">Grupare: Proiect</option>
             </select>
             {activeFilters > 0 && (
               <button onClick={() => { setFilterSearch(''); setFilterClient(''); setFilterProject(''); setFilterTag(''); setFilterBillable('all') }}
-                className="rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition">
+                className="rounded-full border border-red-200 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition">
                 Reset ({activeFilters})
               </button>
             )}
@@ -1243,30 +1234,30 @@ export default function TimeTracker({
 
           {/* Entries list */}
           {filteredEntries.length === 0 && !running ? (
-            <div className="bg-white rounded-xl border border-dashed border-slate-200 p-12 text-center">
-              <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+            <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 border-2 border-dashed border-gray-100 p-12 text-center">
+              <div className="w-12 h-12 rounded-[16px] bg-[#acff55]/20 flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h2 className="text-lg font-semibold text-slate-900 mb-1">Nicio înregistrare</h2>
-              <p className="text-slate-500 text-sm">{activeFilters > 0 ? 'Niciun rezultat pentru filtrele selectate.' : 'Pornește timerul sau adaugă manual primele ore.'}</p>
+              <h2 className="text-lg font-bold text-gray-900 mb-1">Nicio înregistrare</h2>
+              <p className="text-gray-500 text-sm">{activeFilters > 0 ? 'Niciun rezultat pentru filtrele selectate.' : 'Pornește timerul sau adaugă manual primele ore.'}</p>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-5">
               {Object.entries(groups).map(([groupLabel, groupEntries]) => {
                 const groupMins  = groupEntries.reduce((s, e) => s + (e.duration_minutes ?? 0), 0)
                 const groupValue = groupEntries.filter(e => e.is_billable).reduce((s, e) => s + (e.duration_minutes ?? 0) / 60 * e.hourly_rate, 0)
                 return (
                   <div key={groupLabel}>
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-sm font-semibold text-slate-600 capitalize">{groupLabel}</h3>
+                    <div className="flex items-center justify-between mb-2 px-1">
+                      <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide capitalize">{groupLabel}</h3>
                       <div className="flex items-center gap-3">
-                        {groupValue > 0 && <span className="text-xs text-indigo-600 font-medium">{fmtMoney(groupValue, settings?.default_currency ?? 'RON')}</span>}
-                        <span className="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">{fmtDuration(groupMins)}</span>
+                        {groupValue > 0 && <span className="text-xs text-emerald-600 font-semibold">{fmtMoney(groupValue, settings?.default_currency ?? 'RON')}</span>}
+                        <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">{fmtDuration(groupMins)}</span>
                       </div>
                     </div>
-                    <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100 overflow-hidden">
+                    <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 divide-y divide-gray-50 overflow-hidden">
                       {groupEntries.map(entry => {
                         if (editingId === entry.id) {
                           return (
@@ -1279,19 +1270,19 @@ export default function TimeTracker({
                         const proj      = entry.project as { name: string } | null
                         const value     = (entry.duration_minutes ?? 0) / 60 * entry.hourly_rate
                         return (
-                          <div key={entry.id} className="flex items-center gap-3 px-5 py-3.5 group hover:bg-slate-50 transition">
-                            <div className={`w-1 h-10 rounded-full shrink-0 ${entry.is_billable ? 'bg-indigo-400' : 'bg-slate-200'}`} />
+                          <div key={entry.id} className="flex items-center gap-3 px-5 py-3.5 group hover:bg-gray-50/70 transition">
+                            <div className={`w-1 h-10 rounded-full shrink-0 ${entry.is_billable ? 'bg-[#acff55]' : 'bg-gray-200'}`} />
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-sm font-medium text-slate-800">
-                                  {entry.description ?? <span className="text-slate-400 italic">fără descriere</span>}
+                                <span className="text-sm font-semibold text-gray-800">
+                                  {entry.description ?? <span className="text-gray-400 italic">fără descriere</span>}
                                 </span>
                                 {entryTags.map(t => (
                                   <span key={t.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-white" style={{ backgroundColor: t.color }}>{t.name}</span>
                                 ))}
-                                {entry.is_invoiced && <span className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-600">Facturat</span>}
+                                {entry.is_invoiced && <span className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-600 font-medium">Facturat</span>}
                               </div>
-                              <div className="flex items-center gap-1.5 mt-0.5 text-xs text-slate-400">
+                              <div className="flex items-center gap-1.5 mt-0.5 text-xs text-gray-400">
                                 {client && <span>{client.name}</span>}
                                 {client && proj && <span>›</span>}
                                 {proj && <span>{proj.name}</span>}
@@ -1304,22 +1295,22 @@ export default function TimeTracker({
                               </div>
                             </div>
                             <div className="text-right shrink-0">
-                              <div className="text-sm font-semibold text-slate-700 tabular-nums">{fmtDuration(entry.duration_minutes)}</div>
-                              {value > 0 && <div className="text-xs text-indigo-600">{fmtMoney(value, entry.currency)}</div>}
+                              <div className="text-sm font-bold text-gray-800 tabular-nums">{fmtDuration(entry.duration_minutes)}</div>
+                              {value > 0 && <div className="text-xs text-emerald-600 font-medium">{fmtMoney(value, entry.currency)}</div>}
                             </div>
                             {/* Actions */}
                             <button onClick={() => handleResume(entry)} disabled={isPending || !!running} title="Reia contorizarea"
-                              className="w-8 h-8 rounded-full bg-emerald-100 hover:bg-emerald-500 text-emerald-600 hover:text-white flex items-center justify-center transition shrink-0 disabled:opacity-30 disabled:cursor-not-allowed">
+                              className="w-8 h-8 rounded-full bg-[#acff55]/20 hover:bg-[#acff55] text-gray-700 hover:text-black flex items-center justify-center transition shrink-0 disabled:opacity-30 disabled:cursor-not-allowed">
                               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                             </button>
                             <button onClick={() => setEditingId(entry.id)} title="Editează"
-                              className="w-8 h-8 rounded-full text-slate-300 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition shrink-0 opacity-0 group-hover:opacity-100">
+                              className="w-8 h-8 rounded-full text-gray-300 hover:text-gray-700 hover:bg-gray-100 flex items-center justify-center transition shrink-0 opacity-0 group-hover:opacity-100">
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                               </svg>
                             </button>
                             <button onClick={() => handleDelete(entry.id)} title="Șterge"
-                              className="w-8 h-8 rounded-full text-slate-300 hover:text-red-400 hover:bg-red-50 flex items-center justify-center transition shrink-0 opacity-0 group-hover:opacity-100">
+                              className="w-8 h-8 rounded-full text-gray-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition shrink-0 opacity-0 group-hover:opacity-100">
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                               </svg>
@@ -1338,20 +1329,20 @@ export default function TimeTracker({
 
       {/* ─── ANALYTICS TAB ─────────────────────────────────────────────── */}
       {tab === 'analytics' && (
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Filtru client + butoane */}
           <div className="flex items-center gap-3 flex-wrap">
             <select
               value={analyticsClientId}
               onChange={e => setAnalyticsClientId(e.target.value)}
-              className={`rounded-lg border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 ${analyticsClientId ? 'border-indigo-400 text-indigo-700 font-medium' : 'border-slate-200 text-slate-600'}`}
+              className={`rounded-[12px] border px-3 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition ${analyticsClientId ? 'border-[#acff55] text-gray-800 bg-[#acff55]/10 font-semibold' : 'border-gray-200 bg-gray-50 text-gray-600'}`}
             >
               <option value="">Toți clienții</option>
               {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
             {analyticsClientId && (
               <button onClick={() => setAnalyticsClientId('')}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-500 hover:bg-slate-50 transition">
+                className="rounded-full border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-500 hover:bg-gray-100 transition">
                 × Resetează
               </button>
             )}
@@ -1407,7 +1398,7 @@ export default function TimeTracker({
                       setShareUrl(url)
                     }
                   }}
-                  className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 transition disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white hover:border-gray-300 hover:shadow px-4 py-2 text-sm font-semibold text-gray-700 transition disabled:opacity-50 shadow-sm"
                 >
                   {shareLoading ? (
                     <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -1431,7 +1422,7 @@ export default function TimeTracker({
                   byProject: analytics.byProject,
                   defaultCurrency: settings?.default_currency ?? 'RON',
                 })}
-                className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 px-4 py-2 text-sm font-semibold text-white transition"
+                className="inline-flex items-center gap-2 rounded-full bg-[#acff55] hover:bg-[#9fee44] px-5 py-2 text-sm font-bold text-black transition shadow-sm shadow-[#acff55]/30"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -1444,35 +1435,35 @@ export default function TimeTracker({
           {/* Summary */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard label="Total ore" value={fmtDuration(analyticsStats.totalMins)} sub={`${analyticsStats.activeDays} zile active`} />
-            <StatCard label="Ore facturabile" value={fmtDuration(analyticsStats.billMins)} accent="text-indigo-600" sub={`${analyticsStats.billRatio.toFixed(0)}% din total`} />
+            <StatCard label="Ore facturabile" value={fmtDuration(analyticsStats.billMins)} accent="text-[#5a8a00]" sub={`${analyticsStats.billRatio.toFixed(0)}% din total`} />
             <StatCard label="Venit estimat" value={fmtMoney(analyticsStats.billValue, settings?.default_currency ?? 'RON')} accent="text-emerald-600" />
             <StatCard label="Medie / zi activă" value={fmtDuration(Math.round(analyticsStats.avgMins))} />
           </div>
 
           {/* Bar chart */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 p-6">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h2 className="text-sm font-semibold text-slate-900">
+                <h2 className="text-sm font-bold text-gray-900">
                   Ore lucrate {analytics.chart.isWeekly ? 'pe săptămână' : 'pe zi'}
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-gray-400 mt-0.5">
                   {analytics.chart.isWeekly ? 'Grupare săptămânală pentru perioade lungi' : `${analytics.chart.buckets.length} zile`}
                 </p>
               </div>
               {analytics.byClient.length > 0 ? (
                 <div className="flex items-center gap-3 flex-wrap">
                   {analytics.byClient.slice(0, 5).map((c, i) => (
-                    <span key={i} className="flex items-center gap-1.5 text-xs text-slate-500">
+                    <span key={i} className="flex items-center gap-1.5 text-xs text-gray-500">
                       <span className="w-3 h-3 rounded-sm inline-block" style={{ backgroundColor: CLIENT_PALETTE[i % CLIENT_PALETTE.length] }} />
                       {c.name}
                     </span>
                   ))}
                 </div>
               ) : (
-                <div className="flex items-center gap-4 text-xs text-slate-500">
+                <div className="flex items-center gap-4 text-xs text-gray-500">
                   <span className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-sm bg-indigo-500 inline-block" /> Facturabile
+                    <span className="w-3 h-3 rounded-sm inline-block" style={{ backgroundColor: '#acff55' }} /> Facturabile
                   </span>
                 </div>
               )}
@@ -1485,24 +1476,24 @@ export default function TimeTracker({
           </div>
 
           {/* Billable ratio */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 p-6">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-slate-900">Rată de facturare</h2>
-              <span className="text-sm font-bold text-indigo-600">{analyticsStats.billRatio.toFixed(1)}%</span>
+              <h2 className="text-sm font-bold text-gray-900">Rată de facturare</h2>
+              <span className="text-sm font-bold text-[#5a8a00]">{analyticsStats.billRatio.toFixed(1)}%</span>
             </div>
-            <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
-              <div className="h-full rounded-full bg-indigo-500 transition-all" style={{ width: `${analyticsStats.billRatio}%` }} />
+            <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
+              <div className="h-full rounded-full bg-[#acff55] transition-all" style={{ width: `${analyticsStats.billRatio}%` }} />
             </div>
-            <div className="flex justify-between mt-2 text-xs text-slate-400">
-              <span className="text-indigo-600 font-medium">{fmtDuration(analyticsStats.billMins)} facturabile</span>
+            <div className="flex justify-between mt-2 text-xs text-gray-400">
+              <span className="text-[#5a8a00] font-semibold">{fmtDuration(analyticsStats.billMins)} facturabile</span>
               <span>{fmtDuration(analyticsStats.totalMins - analyticsStats.billMins)} non-facturabile</span>
             </div>
           </div>
 
           {/* Per client */}
           {analytics.byClient.length > 0 && (
-            <div className="bg-white rounded-xl border border-slate-200 p-6">
-              <h2 className="text-sm font-semibold text-slate-900 mb-4">Per client</h2>
+            <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 p-6">
+              <h2 className="text-sm font-bold text-gray-900 mb-4">Per client</h2>
               <div className="space-y-4">
                 {analytics.byClient.map((c, i) => {
                   const clientId = analytics.byClientKeys[i]
@@ -1516,19 +1507,19 @@ export default function TimeTracker({
                         <button
                           type="button"
                           onClick={() => setAnalyticsClientId(prev => prev === clientId ? '' : clientId)}
-                          className="flex items-center gap-2 text-sm text-slate-800 font-medium hover:text-indigo-600 transition text-left"
+                          className="flex items-center gap-2 text-sm text-gray-800 font-semibold hover:text-gray-900 transition text-left"
                         >
                           <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: color }} />
                           {c.name}
                         </button>
-                        <div className="flex items-center gap-4 text-xs text-slate-500">
+                        <div className="flex items-center gap-4 text-xs text-gray-500">
                           <span className="hidden sm:inline">{billPct.toFixed(0)}% facturabil</span>
-                          <span className="font-medium tabular-nums">{fmtDuration(c.mins)}</span>
-                          {c.value > 0 && <span className="font-semibold" style={{ color }}>{fmtMoney(c.value, settings?.default_currency ?? 'RON')}</span>}
-                          <span className="w-8 text-right text-slate-400">{pct.toFixed(0)}%</span>
+                          <span className="font-semibold tabular-nums">{fmtDuration(c.mins)}</span>
+                          {c.value > 0 && <span className="font-bold" style={{ color }}>{fmtMoney(c.value, settings?.default_currency ?? 'RON')}</span>}
+                          <span className="w-8 text-right text-gray-400">{pct.toFixed(0)}%</span>
                         </div>
                       </div>
-                      <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden">
                         <div className="h-full rounded-full transition-all" style={{ width: `${(c.mins / maxMins) * 100}%`, backgroundColor: color }} />
                       </div>
                     </div>
@@ -1540,8 +1531,8 @@ export default function TimeTracker({
 
           {/* Per project */}
           {analytics.byProject.length > 0 && (
-            <div className="bg-white rounded-xl border border-slate-200 p-6">
-              <h2 className="text-sm font-semibold text-slate-900 mb-4">Per proiect</h2>
+            <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 p-6">
+              <h2 className="text-sm font-bold text-gray-900 mb-4">Per proiect</h2>
               <div className="space-y-4">
                 {analytics.byProject.map((p, i) => {
                   const pct = analyticsStats.totalMins > 0 ? (p.mins / analyticsStats.totalMins) * 100 : 0
@@ -1549,17 +1540,17 @@ export default function TimeTracker({
                     <div key={i}>
                       <div className="flex items-center justify-between mb-1.5">
                         <div>
-                          <span className="text-sm text-slate-800 font-medium">{p.name}</span>
-                          <span className="ml-2 text-xs text-slate-400">{p.clientName}</span>
+                          <span className="text-sm text-gray-800 font-semibold">{p.name}</span>
+                          <span className="ml-2 text-xs text-gray-400">{p.clientName}</span>
                         </div>
-                        <div className="flex items-center gap-4 text-xs text-slate-500">
-                          <span className="font-medium tabular-nums">{fmtDuration(p.mins)}</span>
-                          {p.value > 0 && <span className="text-violet-600 font-semibold">{fmtMoney(p.value, settings?.default_currency ?? 'RON')}</span>}
-                          <span className="w-8 text-right text-slate-400">{pct.toFixed(0)}%</span>
+                        <div className="flex items-center gap-4 text-xs text-gray-500">
+                          <span className="font-semibold tabular-nums">{fmtDuration(p.mins)}</span>
+                          {p.value > 0 && <span className="text-emerald-600 font-bold">{fmtMoney(p.value, settings?.default_currency ?? 'RON')}</span>}
+                          <span className="w-8 text-right text-gray-400">{pct.toFixed(0)}%</span>
                         </div>
                       </div>
-                      <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
-                        <div className="h-full rounded-full bg-violet-400 transition-all" style={{ width: `${pct}%` }} />
+                      <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+                        <div className="h-full rounded-full bg-[#acff55] transition-all" style={{ width: `${pct}%` }} />
                       </div>
                     </div>
                   )
@@ -1570,11 +1561,11 @@ export default function TimeTracker({
 
           {/* Per tag */}
           {analytics.byTag.length > 0 && (
-            <div className="bg-white rounded-xl border border-slate-200 p-6">
-              <h2 className="text-sm font-semibold text-slate-900 mb-4">Per tag</h2>
+            <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 p-6">
+              <h2 className="text-sm font-bold text-gray-900 mb-4">Per tag</h2>
               <div className="flex flex-wrap gap-2">
                 {analytics.byTag.map((t, i) => (
-                  <div key={i} className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium text-white" style={{ backgroundColor: t.color }}>
+                  <div key={i} className="flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-medium text-white" style={{ backgroundColor: t.color }}>
                     {t.name}
                     <span className="opacity-75 text-xs bg-black/10 px-1.5 py-0.5 rounded-full">{fmtDuration(t.mins)}</span>
                   </div>
@@ -1584,8 +1575,8 @@ export default function TimeTracker({
           )}
 
           {analyticsEntries.length === 0 && (
-            <div className="bg-white rounded-xl border border-dashed border-slate-200 p-12 text-center">
-              <p className="text-slate-400 text-sm">
+            <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 border-2 border-dashed border-gray-100 p-12 text-center">
+              <p className="text-gray-400 text-sm">
                 {analyticsClientId ? 'Nicio activitate pentru clientul selectat în această perioadă.' : 'Nicio activitate în perioada selectată.'}
               </p>
             </div>
@@ -1679,10 +1670,10 @@ function TimeSettingsPanel({
   }
 
   return (
-    <div className="space-y-8 max-w-2xl">
+    <div className="space-y-5 max-w-2xl">
       {msg && (
-        <div className="flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-700">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <div className="flex items-center gap-2 rounded-[12px] bg-[#acff55]/20 border border-[#acff55] px-4 py-3 text-sm text-gray-800 font-medium">
+          <svg className="w-4 h-4 text-[#5a8a00]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
           {msg}
@@ -1690,20 +1681,20 @@ function TimeSettingsPanel({
       )}
 
       {/* Default rate */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-sm font-semibold text-slate-900 mb-1">Tarif implicit</h2>
-        <p className="text-xs text-slate-400 mb-4">Aplicat când nu e setat un tarif per client.</p>
+      <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 p-6">
+        <h2 className="text-sm font-bold text-gray-900 mb-1">Tarif implicit</h2>
+        <p className="text-xs text-gray-400 mb-4">Aplicat când nu e setat un tarif per client.</p>
         <form onSubmit={handleSaveSettings}>
           <div className="flex items-center gap-3">
             <input type="text" inputMode="decimal" value={defaultRate} onChange={e => setDefaultRate(e.target.value)} placeholder="ex: 100"
-              className="w-32 rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              className="w-32 rounded-[12px] border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition" />
             <select value={defaultCurrency} onChange={e => setDefaultCurrency(e.target.value)}
-              className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              className="rounded-[12px] border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition">
               {['RON','EUR','USD','GBP'].map(c => <option key={c}>{c}</option>)}
             </select>
-            <span className="text-sm text-slate-500">/ oră</span>
+            <span className="text-sm text-gray-500">/ oră</span>
             <button type="submit" disabled={isPending}
-              className="ml-auto rounded-lg bg-indigo-600 hover:bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white transition disabled:opacity-60">
+              className="ml-auto rounded-full bg-[#acff55] hover:bg-[#9fee44] px-5 py-2.5 text-sm font-bold text-black transition disabled:opacity-60">
               Salvează
             </button>
           </div>
@@ -1711,32 +1702,32 @@ function TimeSettingsPanel({
       </div>
 
       {/* Per client rates */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-sm font-semibold text-slate-900 mb-1">Tarife per client</h2>
-        <p className="text-xs text-slate-400 mb-4">Se auto-completează la selectarea clientului în timer.</p>
+      <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 p-6">
+        <h2 className="text-sm font-bold text-gray-900 mb-1">Tarife per client</h2>
+        <p className="text-xs text-gray-400 mb-4">Se auto-completează la selectarea clientului în timer.</p>
         {clients.length === 0 ? (
-          <p className="text-sm text-slate-400 italic">Nu ai clienți adăugați încă.</p>
+          <p className="text-sm text-gray-400 italic">Nu ai clienți adăugați încă.</p>
         ) : (
           <div className="space-y-3">
             {clients.map(c => {
               const s = rateStates[c.id] ?? { rate: '', currency: defaultCurrency }
               return (
                 <div key={c.id} className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0">
-                    <span className="text-xs font-bold text-indigo-600">{c.name[0].toUpperCase()}</span>
+                  <div className="w-8 h-8 rounded-[10px] bg-[#acff55]/20 flex items-center justify-center shrink-0">
+                    <span className="text-xs font-bold text-gray-700">{c.name[0].toUpperCase()}</span>
                   </div>
-                  <span className="text-sm text-slate-700 flex-1 truncate">{c.name}</span>
+                  <span className="text-sm text-gray-700 flex-1 truncate font-medium">{c.name}</span>
                   <input type="text" inputMode="decimal" value={s.rate}
                     onChange={e => setRateStates(prev => ({ ...prev, [c.id]: { ...prev[c.id] ?? { currency: 'RON' }, rate: e.target.value } }))}
                     placeholder="Tarif/h"
-                    className="w-24 rounded-lg border border-slate-200 px-3 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    className="w-24 rounded-[12px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-center focus:outline-none focus:border-[#acff55] focus:bg-white transition" />
                   <select value={s.currency ?? defaultCurrency}
                     onChange={e => setRateStates(prev => ({ ...prev, [c.id]: { ...prev[c.id] ?? { rate: '0' }, currency: e.target.value } }))}
-                    className="rounded-lg border border-slate-200 px-2 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    className="rounded-[12px] border border-gray-200 bg-gray-50 px-2 py-2 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition">
                     {['RON','EUR','USD','GBP'].map(cur => <option key={cur}>{cur}</option>)}
                   </select>
                   <button onClick={() => handleSaveClientRate(c.id)} disabled={isPending}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 transition disabled:opacity-60">
+                    className="rounded-full border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition disabled:opacity-60">
                     Salvează
                   </button>
                 </div>
@@ -1747,26 +1738,26 @@ function TimeSettingsPanel({
       </div>
 
       {/* Tags */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-sm font-semibold text-slate-900 mb-1">Tag-uri</h2>
-        <p className="text-xs text-slate-400 mb-4">Etichetează înregistrările pentru rapoarte și filtrare.</p>
+      <div className="bg-white rounded-[20px] shadow-lg shadow-black/5 p-6">
+        <h2 className="text-sm font-bold text-gray-900 mb-1">Tag-uri</h2>
+        <p className="text-xs text-gray-400 mb-4">Etichetează înregistrările pentru rapoarte și filtrare.</p>
         <form onSubmit={handleAddTag} className="flex items-center gap-3 mb-5">
           <input value={newTagName} onChange={e => setNewTagName(e.target.value)} placeholder="Nume tag (ex: Design, Dev, Meeting)"
-            className="flex-1 rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            className="flex-1 rounded-[12px] border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#acff55] focus:bg-white transition" />
           <div className="flex items-center gap-1.5">
             {TAG_COLORS.map(c => (
               <button key={c} type="button" onClick={() => setNewTagColor(c)}
-                className={`w-6 h-6 rounded-full transition ${newTagColor === c ? 'ring-2 ring-offset-2 ring-slate-400 scale-110' : ''}`}
+                className={`w-6 h-6 rounded-full transition ${newTagColor === c ? 'ring-2 ring-offset-2 ring-gray-400 scale-110' : ''}`}
                 style={{ backgroundColor: c }} />
             ))}
           </div>
           <button type="submit" disabled={isPending || !newTagName.trim()}
-            className="rounded-lg bg-indigo-600 hover:bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white transition disabled:opacity-60 shrink-0">
+            className="rounded-full bg-[#acff55] hover:bg-[#9fee44] px-5 py-2.5 text-sm font-bold text-black transition disabled:opacity-60 shrink-0">
             Adaugă
           </button>
         </form>
         {tags.length === 0 ? (
-          <p className="text-sm text-slate-400 italic">Niciun tag creat.</p>
+          <p className="text-sm text-gray-400 italic">Niciun tag creat.</p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {tags.map(t => (
