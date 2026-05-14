@@ -163,7 +163,7 @@ export async function POST(request: Request) {
 
   const isOffer = inv.type === 'offer'
   const docTitle = isOffer ? 'Ofertă comercială' : 'Factură fiscală'
-  const fromName = profile?.company_name ?? profile?.full_name ?? 'Freelio'
+  const fromName = profile?.company_name ?? profile?.full_name ?? 'Limeeo'
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
 
   const resend = new Resend(resendKey)

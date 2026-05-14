@@ -251,7 +251,7 @@ export default async function UpgradePage({
         </div>
         <p className="text-center text-xs text-slate-400 mt-6">
           Ai întrebări? Scrie-ne la{' '}
-          <a href="mailto:contact@freelio.ro" className="text-indigo-500 hover:underline">contact@freelio.ro</a>
+          <a href="mailto:contact@limeeo.ro" className="text-indigo-500 hover:underline">contact@limeeo.ro</a>
         </p>
       </div>
     </div>

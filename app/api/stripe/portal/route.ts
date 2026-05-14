@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No subscription found' }, { status: 400 })
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://freelio-six.vercel.app'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://limeeo-six.vercel.app'
 
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,

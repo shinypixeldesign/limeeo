@@ -110,7 +110,7 @@ GOOGLE_CLIENT_SECRET=your_client_secret_here`}</CodeBlock>
           <Step number={2} title="Înregistrează o aplicație nouă">
             <p>Mergi la <strong>Microsoft Entra ID → App registrations → New registration</strong>.</p>
             <ul className="list-disc list-inside space-y-1 mt-1">
-              <li>Name: orice (ex: Freelio)</li>
+              <li>Name: orice (ex: Limeeo)</li>
               <li>Supported account types: <strong>Accounts in any organizational directory and personal Microsoft accounts</strong></li>
               <li>Redirect URI (Web):</li>
             </ul>

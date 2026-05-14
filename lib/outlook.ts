@@ -131,7 +131,7 @@ async function sendViaResend({ to, subject, html }: SendEmailOptions): Promise<v
 
   const resend = new Resend(resendKey)
   await resend.emails.send({
-    from: `Freelio <${fromEmail}>`,
+    from: `Limeeo <${fromEmail}>`,
     to: [to],
     subject,
     html,

@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       }, { status: 429 })
     }
 
-    const systemPrompt = `Ești un asistent AI integrat în Freelio — un CRM pentru freelanceri români.
+    const systemPrompt = `Ești un asistent AI integrat în Limeeo — un CRM pentru freelanceri români.
 Ajuți utilizatorul cu: redactarea de email-uri profesionale, propuneri de proiecte, mesaje către clienți, analiză business, sfaturi de pricing și orice altceva relevant pentru activitatea unui freelancer.
 Răspunde întotdeauna în română, concis și practic. Astăzi este ${now.toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}.`
 

@@ -68,7 +68,7 @@ export default async function ReportPage({ params }: { params: Promise<{ token: 
         <div className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-8 text-white">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-indigo-200 text-sm font-semibold tracking-wide uppercase mb-1">Freelio</p>
+              <p className="text-indigo-200 text-sm font-semibold tracking-wide uppercase mb-1">Limeeo</p>
               <h1 className="text-3xl font-extrabold mb-1">Raport Pontaj</h1>
               <p className="text-indigo-200 text-sm">
                 Perioadă: <strong className="text-white">{share.period_label}</strong>
@@ -216,7 +216,7 @@ export default async function ReportPage({ params }: { params: Promise<{ token: 
 
         {/* Footer */}
         <p className="text-center text-xs text-slate-400 pb-4">
-          Raport generat cu <strong className="text-indigo-600">Freelio</strong> · Valid până la {new Date(share.expires_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}
+          Raport generat cu <strong className="text-indigo-600">Limeeo</strong> · Valid până la {new Date(share.expires_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}}
         </p>
       </div>
     </div>

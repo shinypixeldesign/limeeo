@@ -16,7 +16,7 @@ export default function LoginPage() {
             <span className="text-white text-xl font-bold">F</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900">Bun venit înapoi</h1>
-          <p className="text-slate-500 text-sm mt-1">Intră în contul Freelio</p>
+          <p className="text-slate-500 text-sm mt-1">Intră în contul Limeeo</p>
         </div>
 
         {/* Card */}

@@ -148,9 +148,9 @@ export default function Sidebar({ userEmail, userName }: SidebarProps) {
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-800">
         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500 shrink-0">
-          <span className="text-white text-sm font-bold">F</span>
+          <span className="text-white text-sm font-bold">L</span>
         </div>
-        <span className="text-lg font-semibold tracking-tight">Freelio</span>
+        <span className="text-lg font-semibold tracking-tight">Limeeo</span>
       </div>
 
       {/* Navigation */}

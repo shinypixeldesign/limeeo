@@ -1,5 +1,5 @@
 -- ============================================================
--- FREELIO — Schema inițială (Faza 1 MVP)
+-- LIMEEO — Schema inițială (Faza 1 MVP)
 -- Rulează în Supabase Dashboard → SQL Editor
 -- ============================================================
 

@@ -79,7 +79,7 @@ export async function GET(request: Request) {
         .eq('id', userId)
         .single()
 
-      const fromName = profile?.company_name ?? profile?.full_name ?? 'Freelio'
+      const fromName = profile?.company_name ?? profile?.full_name ?? 'Limeeo'
 
       let resources: ResourceRow[] = []
 

@@ -19,7 +19,7 @@ function buildInviteEmailHtml(opts: {
 <body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
   <div style="max-width:560px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
     <div style="background:#6366f1;padding:32px 40px;">
-      <h1 style="color:#fff;font-size:22px;font-weight:800;margin:0;">Freelio</h1>
+      <h1 style="color:#fff;font-size:22px;font-weight:800;margin:0;">Limeeo</h1>
     </div>
     <div style="padding:40px;">
       <h2 style="font-size:20px;font-weight:700;color:#1e293b;margin:0 0 12px;">Ai fost invitat să colaborezi</h2>
@@ -35,7 +35,7 @@ function buildInviteEmailHtml(opts: {
         Acceptă invitația →
       </a>
       <p style="color:#94a3b8;font-size:12px;margin:0;">
-        Link-ul expiră în 7 zile. Dacă nu ai un cont Freelio, vei fi ghidat să îți creezi unul gratuit.
+        Link-ul expiră în 7 zile. Dacă nu ai un cont Limeeo, vei fi ghidat să îți creezi unul gratuit.
       </p>
     </div>
   </div>
@@ -123,12 +123,12 @@ export async function inviteMemberAction(
   // Trimite email de invitație
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://freelio-six.vercel.app'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://limeeo-six.vercel.app'
     const inviteUrl = `${appUrl}/invite/${token}`
     const fromName = profile?.company_name ?? profile?.full_name ?? 'Un freelancer'
 
     await resend.emails.send({
-      from: 'Freelio <noreply@freelio.app>',
+      from: 'Limeeo <noreply@limeeo.app>',
       to: email,
       subject: `${fromName} te invită să colaborezi pe "${project.name}"`,
       html: buildInviteEmailHtml({ fromName, projectName: project.name, inviteUrl, role }),
@@ -184,13 +184,13 @@ export async function resendInviteAction(formData: FormData): Promise<{ error?: 
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://freelio-six.vercel.app'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://limeeo-six.vercel.app'
     const inviteUrl = `${appUrl}/invite/${member.invite_token}`
     const fromName = profile?.company_name ?? profile?.full_name ?? 'Un freelancer'
     const projectName = (member.project as { name: string } | null)?.name ?? 'Proiect'
 
     await resend.emails.send({
-      from: 'Freelio <noreply@freelio.app>',
+      from: 'Limeeo <noreply@limeeo.app>',
       to: member.invited_email,
       subject: `Reminder: ${fromName} te invită să colaborezi pe "${projectName}"`,
       html: buildInviteEmailHtml({ fromName, projectName, inviteUrl, role: member.role }),

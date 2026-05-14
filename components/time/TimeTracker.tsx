@@ -237,7 +237,7 @@ async function exportPDF(opts: {
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(8)
   doc.setFont('helvetica', 'bold')
-  doc.text('FREELIO', margin, 12)
+  doc.text('LIMEEO', margin, 12)
   doc.setFontSize(18)
   doc.text('Raport Pontaj', margin, 22)
   doc.setFontSize(8)
@@ -450,7 +450,7 @@ async function exportPDF(opts: {
     doc.setFontSize(7)
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(148, 163, 184)
-    doc.text(`Freelio · Raport generat automat · ${new Date().toLocaleString('ro-RO')}`, margin, 290)
+    doc.text(`Limeeo · Raport generat automat · ${new Date().toLocaleString('ro-RO')}`, margin, 290)
     doc.text(`${p} / ${pageCount}`, W - margin, 290, { align: 'right' })
   }
 

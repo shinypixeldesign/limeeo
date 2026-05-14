@@ -1,4 +1,4 @@
-// Tipuri pentru baza de date Freelio
+// Tipuri pentru baza de date Limeeo
 // Actualizat automat după aplicarea migrărilor Supabase
 
 export type UserPlan = 'free' | 'solo' | 'pro' | 'team'

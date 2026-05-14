@@ -8,7 +8,7 @@ type FullOffer = Offer & { client: Client | null; offer_items: OfferItem[] }
 function buildOfferEmailHtml(offer: FullOffer, profile: Profile | null, publicUrl: string): string {
   const fmt = (n: number) => n.toLocaleString('ro-RO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   const accentColor = offer.brand_color ?? '#6366f1'
-  const fromName = profile?.company_name ?? profile?.full_name ?? 'Freelio'
+  const fromName = profile?.company_name ?? profile?.full_name ?? 'Limeeo'
 
   const sortedItems = [...(offer.offer_items ?? [])].sort((a, b) => a.position - b.position)
   const itemsHtml = sortedItems.map((item, i) => `
@@ -163,7 +163,7 @@ export async function POST(request: Request) {
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
   const publicUrl = `${baseUrl}/o/${offer.token}`
-  const fromName = profile?.company_name ?? profile?.full_name ?? 'Freelio'
+  const fromName = profile?.company_name ?? profile?.full_name ?? 'Limeeo'
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
 
   const resend = new Resend(resendKey)

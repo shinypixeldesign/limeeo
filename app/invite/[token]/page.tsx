@@ -25,7 +25,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
           <h1 className="text-xl font-bold text-slate-900 mb-2">Link invalid sau expirat</h1>
           <p className="text-sm text-slate-500 mb-6">Această invitație nu mai este validă. Contactează persoana care te-a invitat pentru un link nou.</p>
           <Link href="/" className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition">
-            Mergi la Freelio
+            Mergi la Limeeo
           </Link>
         </div>
       </div>
@@ -60,7 +60,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
 
   if (!user) {
     // Neautentificat — arată pagina de invitație cu link de login
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://freelio-six.vercel.app'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://limeeo-six.vercel.app'
     const loginUrl = `/login?redirect=/invite/${token}`
 
     return (
@@ -87,7 +87,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
             <p className="text-xs text-slate-500 mt-1">Rol: <span className="font-medium">{roleLabel}</span></p>
           </div>
           <p className="text-sm text-slate-500 mb-6">
-            Autentifică-te în Freelio pentru a accepta invitația.
+            Autentifică-te în Limeeo pentru a accepta invitația.
           </p>
           <div className="flex flex-col gap-3">
             <Link

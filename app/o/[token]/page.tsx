@@ -394,7 +394,7 @@ export default async function PublicOfferPage({ params }: { params: Promise<{ to
 
         {/* Footer */}
         <div className="text-center pt-2 pb-6 text-xs text-slate-300">
-          Ofertă generată cu <span className="font-semibold text-slate-400">Freelio</span>
+          Ofertă generată cu <span className="font-semibold text-slate-400">Limeeo</span>
         </div>
       </div>
     </div>

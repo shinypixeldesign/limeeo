@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { markAllReadAction } from '@/app/actions/notifications'
 import type { Notification, NotificationType } from '@/types/database'
 
-export const metadata = { title: 'Notificări — Freelio' }
+export const metadata = { title: 'Notificări — Limeeo' }
 
 function formatRelativeTime(dateString: string): string {
   const date = new Date(dateString)

@@ -8,13 +8,13 @@ const geist = Geist({
 })
 
 export const metadata: Metadata = {
-  title: 'Freelio — CRM pentru freelanceri',
+  title: 'Limeeo — CRM pentru freelanceri',
   description: 'Gestionează clienți, proiecte și finanțe cu ajutorul AI.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Freelio',
+    title: 'Limeeo',
   },
 }
 

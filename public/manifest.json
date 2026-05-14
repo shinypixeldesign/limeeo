@@ -1,6 +1,6 @@
 {
-  "name": "Freelio CRM",
-  "short_name": "Freelio",
+  "name": "Limeeo CRM",
+  "short_name": "Limeeo",
   "description": "CRM pentru freelanceri români",
   "start_url": "/dashboard",
   "display": "standalone",

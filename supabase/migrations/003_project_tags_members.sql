@@ -1,5 +1,5 @@
 -- ============================================================
--- FREELIO — Migrare 003: Project Tags & Team Members
+-- LIMEEO — Migrare 003: Project Tags & Team Members
 -- ============================================================
 
 -- Tags array pe proiecte

@@ -448,7 +448,7 @@ export default async function DashboardPage() {
           <div className="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center mx-auto mb-4">
             <span className="text-white text-2xl">🚀</span>
           </div>
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Bun venit în Freelio!</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Bun venit în Limeeo!</h2>
           <p className="text-slate-500 text-sm mb-6 max-w-md mx-auto">
             Totul e pregătit. Adaugă primul client și începe să gestionezi proiectele, facturile și conversațiile AI din același loc.
           </p>

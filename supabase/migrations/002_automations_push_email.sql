@@ -1,5 +1,5 @@
 -- ============================================================
--- FREELIO — Migrare 002: Automations, Push Subscriptions, Email Integration
+-- LIMEEO — Migrare 002: Automations, Push Subscriptions, Email Integration
 -- ============================================================
 
 -- ============================================================
