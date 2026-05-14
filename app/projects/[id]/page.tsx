@@ -176,115 +176,119 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      {/* Main grid */}
+      {/* Top row — Status + Timeline side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
+        {/* Project Status Card — donut + client */}
+        <div className="bg-white rounded-[24px] p-6 shadow-lg shadow-black/5">
+          {/* Status badge */}
+          <div className="flex items-center justify-between mb-6">
+            <div className={`inline-flex items-center gap-2 px-4 py-2 ${sc.bg} rounded-full`}>
+              <div className={`w-2 h-2 rounded-full ${sc.dot}`} />
+              <span className={`text-sm font-bold ${sc.text}`}>{sc.label}</span>
+            </div>
+          </div>
+
+          {/* Donut progress */}
+          <div className="flex flex-col items-center mb-6">
+            <div className="relative w-32 h-32 mb-4">
+              <svg className="transform -rotate-90 w-32 h-32">
+                <circle cx="64" cy="64" r={r} stroke="#f3f4f6" strokeWidth="12" fill="none" />
+                <circle
+                  cx="64" cy="64" r={r}
+                  stroke="#acff55"
+                  strokeWidth="12"
+                  fill="none"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={circumference * (1 - progressPct / 100)}
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl font-bold text-gray-900">{progressPct}%</span>
+              </div>
+            </div>
+            <p className="text-sm font-medium text-gray-600">Completare proiect</p>
+            {totalTasks > 0 && (
+              <p className="text-xs text-gray-400 mt-1">{completedTasks}/{totalTasks} sarcini</p>
+            )}
+          </div>
+
+          {/* Client */}
+          {project.client && (
+            <div className="pt-5 border-t border-gray-100">
+              <Link
+                href={`/clients/${project.client.id}`}
+                className="flex items-center gap-3 group"
+              >
+                <div className={`w-12 h-12 bg-gradient-to-br ${clientGradient} rounded-[14px] flex items-center justify-center flex-shrink-0`}>
+                  <span className="text-sm font-bold text-white">{clientInitials}</span>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500 mb-0.5">Client</p>
+                  <p className="font-bold text-gray-900 group-hover:text-black transition">
+                    {project.client.name}
+                  </p>
+                  {project.client.company && (
+                    <p className="text-xs text-gray-500">{project.client.company}</p>
+                  )}
+                </div>
+              </Link>
+              <div className="flex gap-2 mt-3">
+                {project.client.email && (
+                  <a href={`mailto:${project.client.email}`}
+                    className="flex-1 py-2 text-xs font-semibold text-center bg-gray-100 hover:bg-gray-200 rounded-[10px] text-gray-700 transition truncate px-2">
+                    ✉ Email
+                  </a>
+                )}
+                {project.client.phone && (
+                  <a href={`tel:${project.client.phone}`}
+                    className="flex-1 py-2 text-xs font-semibold text-center bg-gray-100 hover:bg-gray-200 rounded-[10px] text-gray-700 transition">
+                    ☎ Sună
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Timeline Card */}
+        <div className="bg-white rounded-[24px] p-6 shadow-lg shadow-black/5">
+          <h3 className="text-xs font-bold text-gray-900 mb-5 uppercase tracking-wide">Timeline</h3>
+          <div className="space-y-5">
+            {project.start_date && (
+              <div>
+                <p className="text-xs font-medium text-gray-500 mb-1.5">Data start</p>
+                <div className="flex items-center gap-2">
+                  <Calendar size={15} className="text-gray-400" />
+                  <p className="font-semibold text-gray-900 text-sm">
+                    {new Date(project.start_date).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
+                </div>
+              </div>
+            )}
+            <div>
+              <p className="text-xs font-medium text-gray-500 mb-1.5">Creat pe</p>
+              <div className="flex items-center gap-2">
+                <Calendar size={15} className="text-gray-400" />
+                <p className="font-semibold text-gray-900 text-sm">
+                  {new Date(project.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </p>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-500 mb-1.5">Deadline final</p>
+              <DeadlineInfo deadline={project.deadline} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom grid — Financial/Team + Description/Tasks */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* ── Coloana stânga ── */}
         <div className="space-y-6">
-
-          {/* Project Status Card — donut + client */}
-          <div className="bg-white rounded-[24px] p-6 shadow-lg shadow-black/5">
-            {/* Status badge */}
-            <div className="flex items-center justify-between mb-6">
-              <div className={`inline-flex items-center gap-2 px-4 py-2 ${sc.bg} rounded-full`}>
-                <div className={`w-2 h-2 rounded-full ${sc.dot}`} />
-                <span className={`text-sm font-bold ${sc.text}`}>{sc.label}</span>
-              </div>
-            </div>
-
-            {/* Donut progress */}
-            <div className="flex flex-col items-center mb-6">
-              <div className="relative w-32 h-32 mb-4">
-                <svg className="transform -rotate-90 w-32 h-32">
-                  <circle cx="64" cy="64" r={r} stroke="#f3f4f6" strokeWidth="12" fill="none" />
-                  <circle
-                    cx="64" cy="64" r={r}
-                    stroke="#acff55"
-                    strokeWidth="12"
-                    fill="none"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={circumference * (1 - progressPct / 100)}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-3xl font-bold text-gray-900">{progressPct}%</span>
-                </div>
-              </div>
-              <p className="text-sm font-medium text-gray-600">Completare proiect</p>
-              {totalTasks > 0 && (
-                <p className="text-xs text-gray-400 mt-1">{completedTasks}/{totalTasks} sarcini</p>
-              )}
-            </div>
-
-            {/* Client */}
-            {project.client && (
-              <div className="pt-5 border-t border-gray-100">
-                <Link
-                  href={`/clients/${project.client.id}`}
-                  className="flex items-center gap-3 group"
-                >
-                  <div className={`w-12 h-12 bg-gradient-to-br ${clientGradient} rounded-[14px] flex items-center justify-center flex-shrink-0`}>
-                    <span className="text-sm font-bold text-white">{clientInitials}</span>
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-gray-500 mb-0.5">Client</p>
-                    <p className="font-bold text-gray-900 group-hover:text-black transition">
-                      {project.client.name}
-                    </p>
-                    {project.client.company && (
-                      <p className="text-xs text-gray-500">{project.client.company}</p>
-                    )}
-                  </div>
-                </Link>
-                <div className="flex gap-2 mt-3">
-                  {project.client.email && (
-                    <a href={`mailto:${project.client.email}`}
-                      className="flex-1 py-2 text-xs font-semibold text-center bg-gray-100 hover:bg-gray-200 rounded-[10px] text-gray-700 transition truncate px-2">
-                      ✉ Email
-                    </a>
-                  )}
-                  {project.client.phone && (
-                    <a href={`tel:${project.client.phone}`}
-                      className="flex-1 py-2 text-xs font-semibold text-center bg-gray-100 hover:bg-gray-200 rounded-[10px] text-gray-700 transition">
-                      ☎ Sună
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Timeline Card */}
-          <div className="bg-white rounded-[24px] p-6 shadow-lg shadow-black/5">
-            <h3 className="text-xs font-bold text-gray-900 mb-5 uppercase tracking-wide">Timeline</h3>
-            <div className="space-y-5">
-              {project.start_date && (
-                <div>
-                  <p className="text-xs font-medium text-gray-500 mb-1.5">Data start</p>
-                  <div className="flex items-center gap-2">
-                    <Calendar size={15} className="text-gray-400" />
-                    <p className="font-semibold text-gray-900 text-sm">
-                      {new Date(project.start_date).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </p>
-                  </div>
-                </div>
-              )}
-              <div>
-                <p className="text-xs font-medium text-gray-500 mb-1.5">Creat pe</p>
-                <div className="flex items-center gap-2">
-                  <Calendar size={15} className="text-gray-400" />
-                  <p className="font-semibold text-gray-900 text-sm">
-                    {new Date(project.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}
-                  </p>
-                </div>
-              </div>
-              <div>
-                <p className="text-xs font-medium text-gray-500 mb-1.5">Deadline final</p>
-                <DeadlineInfo deadline={project.deadline} />
-              </div>
-            </div>
-          </div>
 
           {/* Financial Health Card */}
           {(project.budget || isHourly) && (
