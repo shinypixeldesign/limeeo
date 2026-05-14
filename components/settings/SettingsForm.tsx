@@ -155,6 +155,27 @@ export default function SettingsForm({ profile, userEmail }: SettingsFormProps) 
         </div>
       </section>
 
+      {/* Preferințe */}
+      <section>
+        <h2 className="text-base font-semibold text-slate-900 mb-4 pb-2 border-b border-slate-200">Preferințe</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">Valută implicită</label>
+            <select
+              name="default_currency"
+              defaultValue={profile?.default_currency ?? 'RON'}
+              className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white"
+            >
+              <option value="RON">RON — Leu românesc</option>
+              <option value="EUR">EUR — Euro</option>
+              <option value="USD">USD — Dolar american</option>
+              <option value="GBP">GBP — Liră sterlină</option>
+            </select>
+            <p className="text-xs text-slate-400 mt-1">Valuta selectată va fi pre-completată la oferte, facturi și pontaj.</p>
+          </div>
+        </div>
+      </section>
+
       {/* Logo */}
       <section>
         <h2 className="text-base font-semibold text-slate-900 mb-4 pb-2 border-b border-slate-200">Logo companie</h2>

@@ -25,6 +25,7 @@ export async function saveProfileAction(state: SettingsState, formData: FormData
   const company_email = (formData.get('company_email') as string)?.trim() || null
   const company_website = (formData.get('company_website') as string)?.trim() || null
   const logo_url = (formData.get('logo_url') as string)?.trim() || null
+  const default_currency = (formData.get('default_currency') as string) || 'RON'
 
   const { error } = await supabase
     .from('profiles')
@@ -42,6 +43,7 @@ export async function saveProfileAction(state: SettingsState, formData: FormData
       company_email,
       company_website,
       logo_url,
+      default_currency,
       updated_at: new Date().toISOString(),
     })
     .eq('id', user.id)

@@ -34,6 +34,8 @@ export interface Profile {
   stripe_price_id: string | null
   subscription_status: string | null
   current_period_end: string | null
+  // Global default
+  default_currency: string
   // Offer defaults
   offer_series_prefix: string
   offer_default_intro: string | null

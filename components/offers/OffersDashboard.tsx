@@ -86,9 +86,22 @@ export default function OffersDashboard({ offers }: { offers: OfferWithClient[] 
     const accepted = yearOffers.filter(o => o.status === 'accepted')
     const pending  = yearOffers.filter(o => ['sent','viewed'].includes(o.status))
     const decided  = yearOffers.filter(o => ['accepted','rejected'].includes(o.status))
+
+    // Grupăm valorile pe valută
+    const revenueByCurrency: Record<string, number> = {}
+    accepted.forEach(o => {
+      const cur = o.currency ?? 'RON'
+      revenueByCurrency[cur] = (revenueByCurrency[cur] ?? 0) + o.total
+    })
+    const pendingByCurrency: Record<string, number> = {}
+    pending.forEach(o => {
+      const cur = o.currency ?? 'RON'
+      pendingByCurrency[cur] = (pendingByCurrency[cur] ?? 0) + o.total
+    })
+
     return {
-      revenue:       accepted.reduce((s, o) => s + o.total, 0),
-      pendingVal:    pending.reduce((s, o) => s + o.total, 0),
+      revenueByCurrency,
+      pendingByCurrency,
       convRate:      decided.length > 0 ? Math.round((accepted.length / decided.length) * 100) : 0,
       acceptedCount: accepted.length,
       pendingCount:  pending.length,
@@ -112,13 +125,18 @@ export default function OffersDashboard({ offers }: { offers: OfferWithClient[] 
   const maxMonthVal = Math.max(...monthlyData.map(m => m.accepted + m.pending), 1)
 
   const topClients = useMemo(() => {
-    const map = new Map<string, { name: string; value: number; count: number }>()
+    const map = new Map<string, { name: string; byCurrency: Record<string, number>; count: number }>()
     yearOffers.filter(o => o.status === 'accepted' && o.client).forEach(o => {
       const key = o.client!.id
-      const cur = map.get(key) ?? { name: o.client!.name, value: 0, count: 0 }
-      map.set(key, { ...cur, value: cur.value + o.total, count: cur.count + 1 })
+      const cur = map.get(key) ?? { name: o.client!.name, byCurrency: {}, count: 0 }
+      const currency = o.currency ?? 'RON'
+      cur.byCurrency[currency] = (cur.byCurrency[currency] ?? 0) + o.total
+      map.set(key, { ...cur, count: cur.count + 1 })
     })
-    return Array.from(map.values()).sort((a, b) => b.value - a.value).slice(0, 5)
+    // Sortăm după valoarea totală (sum across all currencies, for ranking)
+    return Array.from(map.values())
+      .sort((a, b) => Object.values(b.byCurrency).reduce((s, v) => s + v, 0) - Object.values(a.byCurrency).reduce((s, v) => s + v, 0))
+      .slice(0, 5)
   }, [yearOffers])
 
   const recentActivity = useMemo(
@@ -134,6 +152,13 @@ export default function OffersDashboard({ offers }: { offers: OfferWithClient[] 
   const fmt  = (n: number) => n.toLocaleString('ro-RO', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
   const fmtD = (n: number) => n.toLocaleString('ro-RO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   const fmtDate = (s: string) => new Date(s).toLocaleDateString('ro-RO', { day: '2-digit', month: 'short' })
+
+  // Formatează un map { EUR: 1500, RON: 782 } → "1.500 EUR · 782 RON"
+  const fmtCurrencyMap = (map: Record<string, number>) => {
+    const entries = Object.entries(map).sort((a, b) => b[1] - a[1])
+    if (entries.length === 0) return '0 RON'
+    return entries.map(([cur, val]) => `${fmt(val)} ${cur}`).join(' · ')
+  }
 
   const funnelRows = [
     { label: 'Total create',     count: stats.totalCount    },
@@ -193,9 +218,9 @@ export default function OffersDashboard({ offers }: { offers: OfferWithClient[] 
 
       {/* ── Stat cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Venituri acceptate" value={`${fmt(stats.revenue)} RON`}
+        <StatCard label="Venituri acceptate" value={fmtCurrencyMap(stats.revenueByCurrency)}
           sub={`${stats.acceptedCount} oferte acceptate`} accent="emerald" />
-        <StatCard label="În așteptare" value={`${fmt(stats.pendingVal)} RON`}
+        <StatCard label="În așteptare" value={fmtCurrencyMap(stats.pendingByCurrency)}
           sub={`${stats.pendingCount} oferte active`} accent="amber" />
         <StatCard label="Rată conversie" value={`${stats.convRate}%`}
           sub={`${stats.acceptedCount} din ${stats.acceptedCount + stats.rejectedCount} decise`} accent="violet" />
@@ -241,8 +266,8 @@ export default function OffersDashboard({ offers }: { offers: OfferWithClient[] 
                   <span className="text-[10px] text-slate-400 font-medium">{m.label}</span>
                   {hasData && (
                     <div className="absolute bottom-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs rounded-lg px-2.5 py-1.5 whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none z-10 shadow-lg">
-                      {m.accepted > 0 && <div className="text-emerald-300">✓ {fmt(m.accepted)} RON</div>}
-                      {m.pending  > 0 && <div className="text-amber-300">⏳ {fmt(m.pending)} RON</div>}
+                      {m.accepted > 0 && <div className="text-emerald-300">✓ {fmt(m.accepted)}</div>}
+                      {m.pending  > 0 && <div className="text-amber-300">⏳ {fmt(m.pending)}</div>}
                     </div>
                   )}
                 </div>
@@ -287,7 +312,7 @@ export default function OffersDashboard({ offers }: { offers: OfferWithClient[] 
                       </span>
                       <span className="text-sm text-slate-700 truncate">{c.name}</span>
                     </div>
-                    <span className="text-xs font-semibold text-slate-600 shrink-0">{fmt(c.value)} RON</span>
+                    <span className="text-xs font-semibold text-slate-600 shrink-0">{fmtCurrencyMap(c.byCurrency)}</span>
                   </div>
                 ))}
               </div>

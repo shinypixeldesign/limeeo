@@ -20,6 +20,7 @@ interface OfferFormProps {
     offer_default_notes?: string | null
     offer_default_validity?: number | null
     offer_brand_color?: string | null
+    default_currency?: string | null
   } | null
 }
 
@@ -348,7 +349,7 @@ export default function OfferForm({ action, offer, clients, projects, cancelHref
       : [{ type: 'fix', category: '', title: '', description: '', deliverables: '', timeline: '', quantity: '1', unit_price: '' }]
   )
   const [taxRate, setTaxRate]             = useState(String(offer?.tax_rate ?? 19))
-  const [currency, setCurrency]           = useState(offer?.currency ?? 'RON')
+  const [currency, setCurrency]           = useState(offer?.currency ?? profileDefaults?.default_currency ?? 'RON')
   const [discountType, setDiscountType]   = useState<'none' | 'percent' | 'fixed'>(offer?.discount_type ?? 'none')
   const [discountValue, setDiscountValue] = useState(String(offer?.discount_value ?? 0))
   const [brandColor, setBrandColor]       = useState(offer?.brand_color ?? profileDefaults?.offer_brand_color ?? '#6366f1')

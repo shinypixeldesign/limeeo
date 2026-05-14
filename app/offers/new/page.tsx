@@ -12,10 +12,10 @@ export default async function NewOfferPage() {
     supabase.from('clients').select('*').eq('user_id', user!.id).order('name'),
     supabase.from('projects').select('*').eq('user_id', user!.id).order('name'),
     supabase.from('offer_packages').select('*').eq('user_id', user!.id).order('updated_at', { ascending: false }),
-    supabase.from('profiles').select('offer_series_prefix,offer_default_intro,offer_default_terms,offer_default_notes,offer_default_validity,offer_brand_color').eq('id', user!.id).single(),
+    supabase.from('profiles').select('offer_series_prefix,offer_default_intro,offer_default_terms,offer_default_notes,offer_default_validity,offer_brand_color,default_currency').eq('id', user!.id).single(),
   ])
 
-  const profile = profileRes.data as Pick<Profile, 'offer_series_prefix'|'offer_default_intro'|'offer_default_terms'|'offer_default_notes'|'offer_default_validity'|'offer_brand_color'> | null
+  const profile = profileRes.data as Pick<Profile, 'offer_series_prefix'|'offer_default_intro'|'offer_default_terms'|'offer_default_notes'|'offer_default_validity'|'offer_brand_color'|'default_currency'> | null
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
