@@ -47,8 +47,9 @@ export async function emitToSmartBillAction(invoiceId: string): Promise<SmartBil
   const client = inv.client as { name: string; company: string | null; email: string | null; cui: string | null; reg_com: string | null; address: string | null; city: string | null; county: string | null; country: string | null } | null
 
   // Construim payload-ul JSON pentru SmartBill
-  const products = (inv.items ?? []).map((item: { description: string; quantity: number; um: string; unit_price: number }) => ({
+  const products = (inv.items ?? []).map((item: { code?: string | null; description: string; quantity: number; um: string; unit_price: number }) => ({
     name: item.description,
+    code: item.code || item.description.slice(0, 20),
     measuringUnitName: item.um || 'buc',
     currency: inv.currency,
     quantity: item.quantity,
@@ -58,15 +59,16 @@ export async function emitToSmartBillAction(invoiceId: string): Promise<SmartBil
     taxPercentage: inv.tax_rate,
     isDiscount: false,
     saveToDb: false,
-    code: '',
   }))
 
   // Adaugă discount ca linie separată dacă există
   if (inv.discount_amount > 0) {
+    const discountName = inv.discount_type === 'percent'
+      ? `Discount ${inv.discount_value}%`
+      : 'Discount'
     products.push({
-      name: inv.discount_type === 'percent'
-        ? `Discount ${inv.discount_value}%`
-        : 'Discount',
+      name: discountName,
+      code: discountName.slice(0, 20),
       measuringUnitName: 'buc',
       currency: inv.currency,
       quantity: 1,
@@ -76,7 +78,6 @@ export async function emitToSmartBillAction(invoiceId: string): Promise<SmartBil
       taxPercentage: inv.tax_rate,
       isDiscount: true,
       saveToDb: false,
-      code: '',
     })
   }
 

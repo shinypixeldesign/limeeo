@@ -207,6 +207,7 @@ export interface Invoice {
 }
 
 export interface InvoiceItem {
+  code?: string | null
   description: string
   quantity: number
   um: string

@@ -20,6 +20,7 @@ interface InvoiceFormProps {
 }
 
 interface ItemRow {
+  code: string
   description: string
   um: string
   quantity: string
@@ -54,6 +55,7 @@ export default function InvoiceForm({
   const [items, setItems] = useState<ItemRow[]>(() => {
     if (invoice?.items?.length) {
       return invoice.items.map(i => ({
+        code:        i.code ?? '',
         description: i.description,
         um:          i.um ?? 'buc',
         quantity:    String(i.quantity),
@@ -61,9 +63,9 @@ export default function InvoiceForm({
       }))
     }
     if (prefillItems?.length) {
-      return prefillItems.map(i => ({ ...i, um: 'buc' }))
+      return prefillItems.map(i => ({ ...i, code: '', um: 'buc' }))
     }
-    return [{ description: '', um: 'buc', quantity: '1', unit_price: '' }]
+    return [{ code: '', description: '', um: 'buc', quantity: '1', unit_price: '' }]
   })
 
   const [taxRate,      setTaxRate]      = useState(invoice != null ? String(invoice.tax_rate) : (prefillTaxRate ?? '19'))
@@ -90,7 +92,7 @@ export default function InvoiceForm({
   }
 
   function addItem() {
-    setItems(prev => [...prev, { description: '', um: 'buc', quantity: '1', unit_price: '' }])
+    setItems(prev => [...prev, { code: '', description: '', um: 'buc', quantity: '1', unit_price: '' }])
   }
 
   function removeItem(index: number) {
@@ -195,7 +197,8 @@ export default function InvoiceForm({
         <div className="border border-slate-200 rounded-xl overflow-hidden">
           {/* Header */}
           <div className="grid bg-slate-50 border-b border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wide"
-            style={{ gridTemplateColumns: '1fr 70px 70px 110px 90px 32px' }}>
+            style={{ gridTemplateColumns: '90px 1fr 70px 70px 110px 90px 32px' }}>
+            <div>Cod</div>
             <div>Descriere</div>
             <div className="text-center">UM</div>
             <div className="text-center">Cant.</div>
@@ -209,8 +212,16 @@ export default function InvoiceForm({
             <div
               key={idx}
               className="grid border-b border-slate-100 last:border-0 px-4 py-2 items-center gap-2 group hover:bg-slate-50"
-              style={{ gridTemplateColumns: '1fr 70px 70px 110px 90px 32px' }}
+              style={{ gridTemplateColumns: '90px 1fr 70px 70px 110px 90px 32px' }}
             >
+              <input
+                name="item_code"
+                type="text"
+                value={row.code}
+                onChange={e => updateItem(idx, 'code', e.target.value)}
+                placeholder="ex: SRV01"
+                className="text-xs text-slate-700 placeholder:text-slate-300 bg-transparent border-0 focus:outline-none focus:ring-0 w-full font-mono"
+              />
               <input
                 name="item_description"
                 type="text"

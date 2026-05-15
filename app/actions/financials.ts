@@ -14,12 +14,14 @@ function parseItems(formData: FormData): InvoiceItem[] {
   const quantities   = formData.getAll('item_quantity') as string[]
   const ums          = formData.getAll('item_um') as string[]
   const prices       = formData.getAll('item_price') as string[]
+  const codes        = formData.getAll('item_code') as string[]
 
   return descriptions
     .map((desc, i) => {
       const qty   = parseFloat(quantities[i] ?? '1') || 1
       const price = parseFloat(prices[i] ?? '0') || 0
       return {
+        code: (codes[i] ?? '').trim() || null,
         description: desc.trim(),
         quantity: qty,
         um: (ums[i] ?? 'buc').trim() || 'buc',
