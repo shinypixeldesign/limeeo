@@ -36,15 +36,15 @@ export async function POST(request: Request) {
 
     const data = await response.json();
 
-    // Răspunsul este un obiect direct, mapăm câmpurile necesare
+    // Răspunsul openapi.ro folosește câmpuri în română
     return NextResponse.json({
       success: true,
       data: {
-        denumire: data.name || '',
-        adresa: data.address || '',
-        nrRegCom: data.registration_number || '',
-        platitorTva: data.vat ? 'DA' : 'NU',
-        stare: data.state || 'Activ'
+        denumire: data.denumire || '',
+        adresa: data.adresa || '',
+        nrRegCom: data.numar_reg_com || '',
+        platitorTva: data.tva ? 'DA' : 'NU',
+        stare: data.stare || 'Activ'
       }
     });
 
