@@ -15,7 +15,7 @@ export type MyMembership = {
   project_id: string
   owner_user_id: string
   project: { id: string; name: string } | null
-  owner: { id: string; full_name: string | null; company_name: string | null } | null
+  owner: { id: string; full_name: string | null; company_name: string | null; email: string | null } | null
 }
 
 export default async function TeamPage() {
@@ -50,11 +50,11 @@ export default async function TeamPage() {
   // Fetch owner profiles separately (FK is to auth.users, not profiles)
   const rawMemberships = myMembershipsRes.data ?? []
   const ownerIds = [...new Set(rawMemberships.map(m => m.owner_user_id))]
-  const ownersMap = new Map<string, { id: string; full_name: string | null; company_name: string | null }>()
+  const ownersMap = new Map<string, { id: string; full_name: string | null; company_name: string | null; email: string | null }>()
   if (ownerIds.length > 0) {
     const { data: ownerProfiles } = await supabase
       .from('profiles')
-      .select('id, full_name, company_name')
+      .select('id, full_name, company_name, email')
       .in('id', ownerIds)
     for (const p of ownerProfiles ?? []) {
       ownersMap.set(p.id, p)

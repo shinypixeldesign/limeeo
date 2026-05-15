@@ -305,7 +305,7 @@ export default function TeamPageClient({ projects, members, myMemberships }: Pro
           </h2>
           <div className="space-y-3">
             {myMemberships.map(membership => {
-              const ownerName = membership.owner?.company_name ?? membership.owner?.full_name ?? 'Necunoscut'
+              const ownerName = membership.owner?.company_name ?? membership.owner?.full_name ?? membership.owner?.email ?? 'Necunoscut'
               const ownerInitials = ownerName.slice(0, 2).toUpperCase()
               const colors = ['bg-indigo-500', 'bg-violet-500', 'bg-emerald-500', 'bg-amber-500', 'bg-rose-500']
               let hash = 0

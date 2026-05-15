@@ -82,7 +82,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       .from('projects')
       .select('*, client:clients(id, name, company, email, phone)')
       .eq('id', id)
-      .eq('user_id', user!.id)
       .single(),
     supabase
       .from('project_tasks')
@@ -93,7 +92,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       .from('project_members')
       .select('*')
       .eq('project_id', id)
-      .eq('owner_user_id', user!.id)
       .order('invited_at', { ascending: false }),
     supabase.from('profiles').select('plan').eq('id', user!.id).single(),
     supabase
@@ -107,8 +105,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   if (!projectRes.data) notFound()
 
   const project = projectRes.data as ProjectWithClient
+  const isOwner = project.user_id === user!.id
   const tasks = (tasksRes.data ?? []) as ProjectTask[]
-  const members = (membersRes.data ?? []) as ProjectMember[]
+  // Membrii sunt vizibili doar pentru proprietar
+  const members = (isOwner ? (membersRes.data ?? []) : []) as ProjectMember[]
   const plan = profileRes.data?.plan ?? 'free'
   const isPlanAllowed = ['pro', 'team'].includes(plan)
 
@@ -164,14 +164,22 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href={`/projects/${project.id}/edit`}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-900 font-semibold rounded-full transition-all shadow-sm hover:shadow"
-            >
-              <Edit2 size={16} />
-              Editează
-            </Link>
-            <DeleteProjectButton projectId={project.id} projectName={project.name} />
+            {isOwner ? (
+              <>
+                <Link
+                  href={`/projects/${project.id}/edit`}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-900 font-semibold rounded-full transition-all shadow-sm hover:shadow"
+                >
+                  <Edit2 size={16} />
+                  Editează
+                </Link>
+                <DeleteProjectButton projectId={project.id} projectName={project.name} />
+              </>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full">
+                👁 Acces de vizualizare
+              </span>
+            )}
           </div>
         </div>
       </div>
