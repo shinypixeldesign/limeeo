@@ -81,6 +81,7 @@ export async function emitToSmartBillAction(invoiceId: string): Promise<SmartBil
     if (inv.discount_type === 'percent') {
       // Discount procentual: discountType=2 + discountPercentage
       products.push({
+        name: `Discount ${inv.discount_value}%`,
         isDiscount: true,
         numberOfItems: regularProducts.length,
         discountType: 2,
@@ -89,6 +90,7 @@ export async function emitToSmartBillAction(invoiceId: string): Promise<SmartBil
     } else {
       // Discount valoric: discountType=1 + discountValue (negativ)
       products.push({
+        name: 'Discount',
         isDiscount: true,
         numberOfItems: regularProducts.length,
         discountType: 1,
