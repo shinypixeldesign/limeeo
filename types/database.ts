@@ -158,7 +158,7 @@ export interface Project {
   client?: Client
 }
 
-export type ProjectMemberRole = 'viewer' | 'editor'
+export type ProjectMemberRole = 'viewer' | 'editor' | 'manager'
 export type ProjectMemberStatus = 'pending' | 'accepted' | 'declined'
 
 export interface ProjectMember {

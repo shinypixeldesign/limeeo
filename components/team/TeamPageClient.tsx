@@ -200,6 +200,7 @@ export default function TeamPageClient({ projects, members, myMemberships }: Pro
                     >
                       <option value="viewer">👁 Vizitator — doar citire</option>
                       <option value="editor">✏️ Editor — poate edita</option>
+                      <option value="manager">⭐ Manager Proiect</option>
                     </select>
                   </div>
                 </div>

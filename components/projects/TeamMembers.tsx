@@ -8,6 +8,7 @@ interface TeamMembersProps {
   projectId: string
   members: ProjectMember[]
   isPlanAllowed: boolean
+  isOwner: boolean
 }
 
 const statusConfig = {
@@ -16,9 +17,10 @@ const statusConfig = {
   declined: { label: 'Refuzat',           cls: 'bg-red-50 text-red-700 ring-red-200' },
 }
 
-const roleConfig = {
+const roleConfig: Record<string, string> = {
   viewer: 'Vizitator',
   editor: 'Editor',
+  manager: 'Manager Proiect',
 }
 
 function MemberAvatar({ email }: { email: string }) {
@@ -93,7 +95,7 @@ function ResendButton({ memberId }: { memberId: string }) {
   )
 }
 
-export default function TeamMembers({ projectId, members, isPlanAllowed }: TeamMembersProps) {
+export default function TeamMembers({ projectId, members, isPlanAllowed, isOwner }: TeamMembersProps) {
   const [inviteState, inviteAction, pending] = useActionState(inviteMemberAction, undefined)
 
   if (!isPlanAllowed) {
@@ -147,16 +149,18 @@ export default function TeamMembers({ projectId, members, isPlanAllowed }: TeamM
                 <MemberAvatar email={member.invited_email} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-slate-800 truncate">{member.invited_email}</p>
-                  <p className="text-xs text-slate-400">{roleConfig[member.role]}</p>
+                  <p className="text-xs text-slate-400">{roleConfig[member.role] ?? member.role}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ring-1 ring-inset ${sc.cls}`}>
                     {sc.label}
                   </span>
-                  {member.status === 'pending' && (
+                  {isOwner && member.status === 'pending' && (
                     <ResendButton memberId={member.id} />
                   )}
-                  <RemoveButton memberId={member.id} projectId={projectId} />
+                  {isOwner && (
+                    <RemoveButton memberId={member.id} projectId={projectId} />
+                  )}
                 </div>
               </div>
             )
@@ -164,72 +168,76 @@ export default function TeamMembers({ projectId, members, isPlanAllowed }: TeamM
         </div>
       )}
 
-      {/* Formular invitație */}
-      <form action={inviteAction} className="space-y-2.5">
-        <input type="hidden" name="project_id" value={projectId} />
+      {/* Formular invitație — doar pentru owner */}
+      {isOwner && (
+        <form action={inviteAction} className="space-y-2.5">
+          <input type="hidden" name="project_id" value={projectId} />
 
-        {inviteState?.error && (
-          <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
-            {inviteState.error}
+          {inviteState?.error && (
+            <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
+              {inviteState.error}
+            </div>
+          )}
+          {inviteState?.success && (
+            <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2 text-xs text-emerald-700 flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              Invitație trimisă cu succes!
+            </div>
+          )}
+
+          {/* Rând 1: email */}
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="email@coleg.ro"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+          />
+
+          {/* Rând 2: rol + buton — ambele în card */}
+          <div className="flex gap-2">
+            <select
+              name="role"
+              defaultValue="viewer"
+              className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white"
+            >
+              <option value="viewer">👁 Vizitator</option>
+              <option value="editor">✏️ Editor</option>
+              <option value="manager">⭐ Manager Proiect</option>
+            </select>
+            <button
+              type="submit"
+              disabled={pending}
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              {pending ? (
+                <>
+                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Se trimite…
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  Invită
+                </>
+              )}
+            </button>
           </div>
-        )}
-        {inviteState?.success && (
-          <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2 text-xs text-emerald-700 flex items-center gap-1.5">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-            Invitație trimisă cu succes!
-          </div>
-        )}
 
-        {/* Rând 1: email */}
-        <input
-          name="email"
-          type="email"
-          required
-          placeholder="email@coleg.ro"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-        />
-
-        {/* Rând 2: rol + buton — ambele în card */}
-        <div className="flex gap-2">
-          <select
-            name="role"
-            defaultValue="viewer"
-            className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white"
-          >
-            <option value="viewer">👁 Vizitator</option>
-            <option value="editor">✏️ Editor</option>
-          </select>
-          <button
-            type="submit"
-            disabled={pending}
-            className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-          >
-            {pending ? (
-              <>
-                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Se trimite…
-              </>
-            ) : (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                Invită
-              </>
-            )}
-          </button>
-        </div>
-
-        <p className="text-xs text-slate-400">
-          <span className="font-medium text-slate-500">Vizitator</span> — doar vedere ·{' '}
-          <span className="font-medium text-slate-500">Editor</span> — poate edita sarcini
-        </p>
-      </form>
+          <p className="text-xs text-slate-400">
+            <span className="font-medium text-slate-500">Vizitator</span> — doar vedere ·{' '}
+            <span className="font-medium text-slate-500">Editor</span> — poate edita sarcini ·{' '}
+            <span className="font-medium text-slate-500">Manager</span> — acces complet
+          </p>
+        </form>
+      )}
     </div>
   )
 }

@@ -6,6 +6,7 @@ import type { Project, Client, ProjectTask, ProjectMember } from '@/types/databa
 import DeleteProjectButton from '@/components/projects/DeleteProjectButton'
 import TaskList from '@/components/projects/TaskList'
 import TeamMembers from '@/components/projects/TeamMembers'
+import ExpensesCard from '@/components/projects/ExpensesCard'
 
 function getAvatarGradient(name: string) {
   const gradients = [
@@ -77,7 +78,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const [projectRes, tasksRes, membersRes, profileRes, timeEntriesRes] = await Promise.all([
+  const [projectRes, tasksRes, membersRes, profileRes, timeEntriesRes, expensesRes, myMembershipRes] = await Promise.all([
     supabase
       .from('projects')
       .select('*, client:clients(id, name, company, email, phone)')
@@ -100,6 +101,18 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       .eq('project_id', id)
       .eq('user_id', user!.id)
       .not('ended_at', 'is', null),
+    supabase
+      .from('project_expenses')
+      .select('*')
+      .eq('project_id', id)
+      .order('date', { ascending: false }),
+    supabase
+      .from('project_members')
+      .select('role')
+      .eq('project_id', id)
+      .eq('member_user_id', user!.id)
+      .eq('status', 'accepted')
+      .maybeSingle(),
   ])
 
   if (!projectRes.data) notFound()
@@ -111,6 +124,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const members = (isOwner ? (membersRes.data ?? []) : []) as ProjectMember[]
   const plan = profileRes.data?.plan ?? 'free'
   const isPlanAllowed = ['pro', 'team'].includes(plan)
+  const expenses = expensesRes.data ?? []
+  const totalExpenses = expenses.reduce((s: number, e: { amount: number }) => s + e.amount, 0)
+  const canEdit = isOwner || ['editor', 'manager'].includes(myMembershipRes.data?.role ?? '')
 
   const sc = statusConfig[project.status]
   const completedTasks = tasks.filter(t => t.is_completed).length
@@ -309,11 +325,21 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             </div>
           )}
 
+          {/* Expenses */}
+          <ExpensesCard
+            projectId={project.id}
+            expenses={expenses}
+            currency={project.currency}
+            isOwner={isOwner}
+            canEdit={canEdit}
+          />
+
           {/* Team */}
           <TeamMembers
             projectId={project.id}
             members={members}
             isPlanAllowed={isPlanAllowed}
+            isOwner={isOwner}
           />
         </div>
 
@@ -365,7 +391,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             <div className="bg-white rounded-[20px] p-5 shadow-lg shadow-black/5 border-2 border-dashed border-gray-100">
               <div className="flex items-center gap-3 text-gray-400">
                 <FolderOpen size={18} />
-                <p className="text-sm">Nicio descriere adăugată. <Link href={`/projects/${project.id}/edit`} className="text-[#acff55] font-semibold hover:opacity-80">Adaugă una →</Link></p>
+                {isOwner ? (
+                  <p className="text-sm">Nicio descriere adăugată. <Link href={`/projects/${project.id}/edit`} className="text-[#acff55] font-semibold hover:opacity-80">Adaugă una →</Link></p>
+                ) : (
+                  <p className="text-sm">Nicio descriere adăugată.</p>
+                )}
               </div>
             </div>
           )}
