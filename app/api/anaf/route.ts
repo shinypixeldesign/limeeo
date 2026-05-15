@@ -6,60 +6,50 @@ export async function POST(request: Request) {
     const { cui } = body;
 
     if (!cui) {
-      return NextResponse.json({ success: false, error: 'CUI-ul este obligatoriu' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'CUI-ul este obligatoriu.' }, { status: 400 });
     }
 
-    // Curățăm CUI-ul de caractere non-numerice (ex: eliminăm 'RO', spații, cratime)
+    // Păstrăm doar cifrele
     const cleanCui = cui.toString().replace(/[^0-9]/g, '');
 
-    // ANAF cere data curentă în format YYYY-MM-DD
-    const today = new Date();
-    const dateStr = today.toISOString().split('T')[0];
+    if (!process.env.OPENAPI_KEY) {
+      console.error('Lipsește OPENAPI_KEY din .env.local');
+      return NextResponse.json({ success: false, error: 'Eroare de configurare server.' }, { status: 500 });
+    }
 
-    // Construim payload-ul exact în formatul strict cerut de ANAF v8
-    const anafPayload = [
-      {
-        cui: parseInt(cleanCui, 10),
-        data: dateStr
-      }
-    ];
-
-    // Apelăm endpoint-ul public ANAF (fără autentificare OAuth)
-    const response = await fetch('https://webservicesp.anaf.ro/PlatitorTvaRest/api/v8/ws/tva', {
-      method: 'POST',
+    // Facem request-ul către OpenAPI
+    const response = await fetch(`https://api.openapi.ro/api/companies/${cleanCui}`, {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(anafPayload),
+        'x-api-key': process.env.OPENAPI_KEY,
+        'Content-Type': 'application/json'
+      }
     });
 
     if (!response.ok) {
-      throw new Error(`Eroare de la serverul ANAF: ${response.status}`);
+      // OpenAPI returnează 404 dacă firma nu există
+      if (response.status === 404) {
+        return NextResponse.json({ success: false, error: 'Firma nu a fost găsită.' }, { status: 404 });
+      }
+      throw new Error(`Eroare de la serverul OpenAPI: ${response.status}`);
     }
 
     const data = await response.json();
 
-    // Verificăm dacă ANAF a găsit firma
-    if (data.cod === 200 && data.found && data.found.length > 0) {
-      const companyData = data.found[0];
+    // Răspunsul este un obiect direct, mapăm câmpurile necesare
+    return NextResponse.json({
+      success: true,
+      data: {
+        denumire: data.name || '',
+        adresa: data.address || '',
+        nrRegCom: data.registration_number || '',
+        platitorTva: data.vat ? 'DA' : 'NU',
+        stare: data.state || 'Activ'
+      }
+    });
 
-      // Returnăm datele curățate către frontend-ul Limeeo
-      return NextResponse.json({
-        success: true,
-        data: {
-          denumire: companyData.denumire,
-          adresa: companyData.adresa,
-          nrRegCom: companyData.nrRegCom,
-          platitorTva: companyData.scpTVA,
-          stare: companyData.stare_inregistrare
-        }
-      });
-    } else {
-      return NextResponse.json({ success: false, error: 'Firma nu a fost găsită la ANAF.' }, { status: 404 });
-    }
-
-  } catch (error) {
-    console.error('Eroare ANAF API:', error);
-    return NextResponse.json({ success: false, error: 'Eroare internă la procesarea datelor ANAF.' }, { status: 500 });
+  } catch (error: unknown) {
+    console.error('Eroare la interogarea OpenAPI:', error);
+    return NextResponse.json({ success: false, error: 'Eroare internă la preluarea datelor.' }, { status: 500 });
   }
 }
