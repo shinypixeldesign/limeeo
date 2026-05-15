@@ -62,7 +62,7 @@ export default async function TeamPage() {
   }
   const myMemberships: MyMembership[] = rawMemberships.map(m => ({
     ...m,
-    project: m.project as { id: string; name: string } | null,
+    project: m.project as unknown as { id: string; name: string } | null,
     owner: ownersMap.get(m.owner_user_id) ?? null,
   }))
 
