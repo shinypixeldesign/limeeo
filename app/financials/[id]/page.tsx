@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import type { Invoice, Client, Project } from '@/types/database'
 import DeleteInvoiceButton from '@/components/financials/DeleteInvoiceButton'
 import InvoiceActions from '@/components/financials/InvoiceActions'
+import SmartBillButton from '@/components/financials/SmartBillButton'
 
 const statusConfig: Record<Invoice['status'], { label: string; class: string }> = {
   draft:     { label: 'Draft',    class: 'bg-slate-100 text-slate-600 ring-slate-200' },
@@ -13,7 +14,12 @@ const statusConfig: Record<Invoice['status'], { label: string; class: string }> 
   cancelled: { label: 'Anulată', class: 'bg-slate-100 text-slate-500 ring-slate-200' },
 }
 
-type FullInvoice = Invoice & { client: Client | null; project: Project | null }
+type FullInvoice = Invoice & {
+  client: Client | null
+  project: Project | null
+  smartbill_number?: string | null
+  smartbill_synced_at?: string | null
+}
 
 export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -78,6 +84,11 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
             </svg>
             Editează
           </Link>
+          <SmartBillButton
+            invoiceId={inv.id}
+            smartbillNumber={inv.smartbill_number ?? null}
+            invoiceStatus={inv.status}
+          />
           <InvoiceActions invoice={inv} />
           <DeleteInvoiceButton invoiceId={inv.id} invoiceNumber={inv.number} />
         </div>

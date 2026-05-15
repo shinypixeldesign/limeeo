@@ -26,6 +26,9 @@ export async function saveProfileAction(state: SettingsState, formData: FormData
   const company_website = (formData.get('company_website') as string)?.trim() || null
   const logo_url = (formData.get('logo_url') as string)?.trim() || null
   const default_currency = (formData.get('default_currency') as string) || 'RON'
+  const smartbill_email = (formData.get('smartbill_email') as string)?.trim() || null
+  const smartbill_token = (formData.get('smartbill_token') as string)?.trim() || null
+  const smartbill_series = (formData.get('smartbill_series') as string)?.trim() || null
 
   const { error } = await supabase
     .from('profiles')
@@ -44,6 +47,9 @@ export async function saveProfileAction(state: SettingsState, formData: FormData
       company_website,
       logo_url,
       default_currency,
+      smartbill_email,
+      smartbill_token,
+      smartbill_series,
       updated_at: new Date().toISOString(),
     })
     .eq('id', user.id)

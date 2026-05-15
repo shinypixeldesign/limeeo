@@ -55,6 +55,10 @@ export interface Profile {
   outlook_email: string | null
   created_at: string
   updated_at: string
+  // SmartBill integration
+  smartbill_email: string | null
+  smartbill_token: string | null
+  smartbill_series: string | null
 }
 
 export type AutomationTriggerType =
@@ -194,6 +198,9 @@ export interface Invoice {
   notes: string | null
   created_at: string
   updated_at: string
+  // SmartBill
+  smartbill_number: string | null
+  smartbill_synced_at: string | null
   // Relații (join)
   client?: Client
   project?: Project

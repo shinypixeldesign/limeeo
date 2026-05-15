@@ -155,6 +155,39 @@ export default function SettingsForm({ profile, userEmail }: SettingsFormProps) 
         </div>
       </section>
 
+      {/* Integrare SmartBill */}
+      <section>
+        <h2 className="text-base font-semibold text-slate-900 mb-1 pb-2 border-b border-slate-200">
+          Integrare SmartBill
+        </h2>
+        <p className="text-xs text-slate-400 mb-4">
+          Conectează contul tău SmartBill pentru a emite facturile direct din Limeeo.
+          Găsești credențialele în SmartBill → Configurare → API.
+        </p>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Email SmartBill" name="smartbill_email" type="email"
+            defaultValue={profile?.smartbill_email}
+            placeholder="email@firma.ro" />
+          <Field label="Seria de facturi" name="smartbill_series"
+            defaultValue={profile?.smartbill_series ?? 'FCT'}
+            placeholder="ex: FCT" hint="Seria configurată în SmartBill" />
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              Token SmartBill
+            </label>
+            <input
+              type="password"
+              name="smartbill_token"
+              defaultValue={profile?.smartbill_token ?? ''}
+              placeholder="001|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+              autoComplete="off"
+              className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-white"
+            />
+            <p className="text-xs text-slate-400 mt-1">Token-ul din SmartBill → Configurare → API → Token</p>
+          </div>
+        </div>
+      </section>
+
       {/* Preferințe */}
       <section>
         <h2 className="text-base font-semibold text-slate-900 mb-4 pb-2 border-b border-slate-200">Preferințe</h2>
