@@ -82,6 +82,8 @@ export async function emitToSmartBillAction(invoiceId: string): Promise<SmartBil
       // Discount procentual: discountType=2 + discountPercentage
       products.push({
         name: `Discount ${inv.discount_value}%`,
+        measuringUnitName: 'buc',
+        currency: inv.currency,
         isDiscount: true,
         numberOfItems: regularProducts.length,
         discountType: 2,
@@ -91,6 +93,8 @@ export async function emitToSmartBillAction(invoiceId: string): Promise<SmartBil
       // Discount valoric: discountType=1 + discountValue (negativ)
       products.push({
         name: 'Discount',
+        measuringUnitName: 'buc',
+        currency: inv.currency,
         isDiscount: true,
         numberOfItems: regularProducts.length,
         discountType: 1,
