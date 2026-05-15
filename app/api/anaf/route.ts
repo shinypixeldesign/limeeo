@@ -36,6 +36,27 @@ export async function POST(request: Request) {
 
     const data = await response.json();
 
+    // Derivăm localitate din câmpul judet (ex: "Municipiul București" → "București")
+    const judetRaw: string = data.judet || '';
+    const county = judetRaw.replace(/^Municipiul\s+/i, '').replace(/^Județul\s+/i, '').trim();
+    // Pentru localitate încercăm să extragem din adresă sau folosim județul simplificat
+    let city = county;
+    if (data.adresa) {
+      const parts = (data.adresa as string).split(',').map((p: string) => p.trim());
+      // Căutăm un segment care arată a localitate (nu stradă, nu număr, nu sector)
+      for (const part of parts) {
+        if (
+          !/^(Str|Bd|Bdul|Calea|Sos|Aleea|Nr|Bl|Sc|Ap|Et|Lot|Sect)/i.test(part) &&
+          !/^\d/.test(part) &&
+          part.length > 2 &&
+          part !== judetRaw
+        ) {
+          city = part;
+          break;
+        }
+      }
+    }
+
     // Răspunsul openapi.ro folosește câmpuri în română
     return NextResponse.json({
       success: true,
@@ -44,7 +65,9 @@ export async function POST(request: Request) {
         adresa: data.adresa || '',
         nrRegCom: data.numar_reg_com || '',
         platitorTva: data.tva ? 'DA' : 'NU',
-        stare: data.stare || 'Activ'
+        stare: data.stare || 'Activ',
+        localitate: city,
+        judet: county,
       }
     });
 

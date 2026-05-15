@@ -24,6 +24,8 @@ interface AnafResult {
     nrRegCom: string
     platitorTva: boolean
     stare: string
+    localitate: string
+    judet: string
   }
 }
 
@@ -69,12 +71,16 @@ export default function ClientForm({ action, client, cancelHref }: ClientFormPro
         return
       }
 
-      const { denumire, adresa, nrRegCom } = result.data
+      const { denumire, adresa, nrRegCom, localitate, judet } = result.data
+
+      console.log('[ANAF] date primite:', { denumire, adresa, nrRegCom, localitate, judet })
 
       // Populează câmpurile
-      if (denumire) setCompany(denumire)
-      if (adresa)   setAddress(adresa)
-      if (nrRegCom) setRegCom(nrRegCom)
+      if (denumire)  setCompany(denumire)
+      if (adresa)    setAddress(adresa)
+      if (nrRegCom)  setRegCom(nrRegCom)
+      if (localitate) setCity(localitate)
+      if (judet)     setCounty(judet)
       setAnafSuccess(true)
     } catch {
       setAnafError('Nu s-a putut conecta la serviciul ANAF. Verifică conexiunea.')
@@ -238,10 +244,10 @@ export default function ClientForm({ action, client, cancelHref }: ClientFormPro
                   </>
                 ) : (
                   <>
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 111 11a6 6 0 0116 0z" />
                     </svg>
-                    ANAF
+                    Completare automată
                   </>
                 )}
               </button>
@@ -280,7 +286,7 @@ export default function ClientForm({ action, client, cancelHref }: ClientFormPro
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-6">
           <div className="sm:col-span-2">
             <label htmlFor="address" className={labelCls}>Adresă</label>
             <input
@@ -305,9 +311,6 @@ export default function ClientForm({ action, client, cancelHref }: ClientFormPro
               className={inputCls}
             />
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
           <div>
             <label htmlFor="county" className={labelCls}>Județ</label>
             <input
