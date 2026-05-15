@@ -9,11 +9,20 @@ type MemberWithProject = ProjectMember & {
   project: { id: string; name: string } | null
 }
 
+export type MyMembership = {
+  id: string
+  role: string
+  project_id: string
+  owner_user_id: string
+  project: { id: string; name: string } | null
+  owner: { id: string; full_name: string | null; company_name: string | null } | null
+}
+
 export default async function TeamPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const [profileRes, membersRes, projectsRes] = await Promise.all([
+  const [profileRes, membersRes, projectsRes, myMembershipsRes] = await Promise.all([
     supabase.from('profiles').select('plan').eq('id', user!.id).single(),
     supabase
       .from('project_members')
@@ -25,12 +34,37 @@ export default async function TeamPage() {
       .select('id, name')
       .eq('user_id', user!.id)
       .order('created_at', { ascending: false }),
+    supabase
+      .from('project_members')
+      .select('id, role, project_id, owner_user_id, project:projects(id, name)')
+      .eq('member_user_id', user!.id)
+      .eq('status', 'accepted')
+      .order('accepted_at', { ascending: false }),
   ])
 
   const plan = profileRes.data?.plan ?? 'free'
   const isPlanAllowed = TEAM_PLANS.includes(plan)
   const members = (isPlanAllowed ? (membersRes.data ?? []) : []) as MemberWithProject[]
   const projects = projectsRes.data ?? []
+
+  // Fetch owner profiles separately (FK is to auth.users, not profiles)
+  const rawMemberships = myMembershipsRes.data ?? []
+  const ownerIds = [...new Set(rawMemberships.map(m => m.owner_user_id))]
+  const ownersMap = new Map<string, { id: string; full_name: string | null; company_name: string | null }>()
+  if (ownerIds.length > 0) {
+    const { data: ownerProfiles } = await supabase
+      .from('profiles')
+      .select('id, full_name, company_name')
+      .in('id', ownerIds)
+    for (const p of ownerProfiles ?? []) {
+      ownersMap.set(p.id, p)
+    }
+  }
+  const myMemberships: MyMembership[] = rawMemberships.map(m => ({
+    ...m,
+    project: m.project as { id: string; name: string } | null,
+    owner: ownersMap.get(m.owner_user_id) ?? null,
+  }))
 
   return (
     <div className="p-8 max-w-4xl">
@@ -91,7 +125,7 @@ export default async function TeamPage() {
 
       {/* Conținut Pro+ */}
       {isPlanAllowed && (
-        <TeamPageClient projects={projects} members={members} />
+        <TeamPageClient projects={projects} members={members} myMemberships={myMemberships} />
       )}
     </div>
   )

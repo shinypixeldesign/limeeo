@@ -4,6 +4,7 @@ import { useActionState, useState } from 'react'
 import Link from 'next/link'
 import { inviteMemberAction, removeMemberAction, resendInviteAction } from '@/app/actions/team'
 import type { ProjectMember } from '@/types/database'
+import type { MyMembership } from '@/app/team/page'
 
 interface Project {
   id: string
@@ -17,6 +18,7 @@ type MemberWithProject = ProjectMember & {
 interface Props {
   projects: Project[]
   members: MemberWithProject[]
+  myMemberships: MyMembership[]
 }
 
 const statusConfig = {
@@ -76,7 +78,7 @@ function RemoveBtn({ memberId, projectId }: { memberId: string; projectId: strin
   )
 }
 
-export default function TeamPageClient({ projects, members }: Props) {
+export default function TeamPageClient({ projects, members, myMemberships }: Props) {
   const [inviteState, inviteAction, pending] = useActionState(inviteMemberAction, undefined)
   const [showForm, setShowForm] = useState(members.length === 0)
 
@@ -292,6 +294,54 @@ export default function TeamPageClient({ projects, members }: Props) {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Echipe din care fac parte */}
+      {myMemberships.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3">
+            Echipe din care fac parte
+          </h2>
+          <div className="space-y-3">
+            {myMemberships.map(membership => {
+              const ownerName = membership.owner?.company_name ?? membership.owner?.full_name ?? 'Necunoscut'
+              const ownerInitials = ownerName.slice(0, 2).toUpperCase()
+              const colors = ['bg-indigo-500', 'bg-violet-500', 'bg-emerald-500', 'bg-amber-500', 'bg-rose-500']
+              let hash = 0
+              for (let i = 0; i < ownerName.length; i++) hash = ownerName.charCodeAt(i) + ((hash << 5) - hash)
+              const avatarColor = colors[Math.abs(hash) % colors.length]
+
+              return (
+                <div key={membership.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                  <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 bg-slate-50">
+                    <div className="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                      </svg>
+                      <Link
+                        href={`/projects/${membership.project_id}`}
+                        className="font-semibold text-sm text-slate-900 hover:text-indigo-600 transition"
+                      >
+                        {membership.project?.name ?? 'Proiect'}
+                      </Link>
+                    </div>
+                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ring-1 ring-inset ${membership.role === 'editor' ? 'bg-indigo-50 text-indigo-700 ring-indigo-200' : 'bg-slate-50 text-slate-600 ring-slate-200'}`}>
+                      {membership.role === 'editor' ? 'Editor' : 'Vizitator'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 px-5 py-3.5">
+                    <div className={`w-8 h-8 rounded-full ${avatarColor} flex items-center justify-center shrink-0`}>
+                      <span className="text-xs font-bold text-white">{ownerInitials}</span>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-slate-800 truncate">{ownerName}</p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
     </div>

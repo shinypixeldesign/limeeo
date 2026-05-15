@@ -121,20 +121,25 @@ export async function inviteMemberAction(
   if (insertError) return { error: 'Eroare la salvare.' }
 
   // Trimite email de invitație
+  const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://limeeo-six.vercel.app'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://limeeo.com'
     const inviteUrl = `${appUrl}/invite/${token}`
     const fromName = profile?.company_name ?? profile?.full_name ?? 'Un freelancer'
 
-    await resend.emails.send({
-      from: 'Limeeo <noreply@limeeo.app>',
+    const { error: emailErr } = await resend.emails.send({
+      from: `Limeeo <${fromEmail}>`,
       to: email,
       subject: `${fromName} te invită să colaborezi pe "${project.name}"`,
       html: buildInviteEmailHtml({ fromName, projectName: project.name, inviteUrl, role }),
     })
-  } catch {
-    // Email failed — invitația există în DB, nu blocăm fluxul
+
+    if (emailErr) {
+      console.error('[invite] Resend error:', emailErr)
+    }
+  } catch (err) {
+    console.error('[invite] Email send failed:', err)
   }
 
   revalidatePath(`/projects/${projectId}`)
@@ -189,13 +194,15 @@ export async function resendInviteAction(formData: FormData): Promise<{ error?: 
     const fromName = profile?.company_name ?? profile?.full_name ?? 'Un freelancer'
     const projectName = (member.project as { name: string } | null)?.name ?? 'Proiect'
 
+    const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
     await resend.emails.send({
-      from: 'Limeeo <noreply@limeeo.app>',
+      from: `Limeeo <${fromEmail}>`,
       to: member.invited_email,
       subject: `Reminder: ${fromName} te invită să colaborezi pe "${projectName}"`,
       html: buildInviteEmailHtml({ fromName, projectName, inviteUrl, role: member.role }),
     })
-  } catch {
+  } catch (err) {
+    console.error('[resend-invite] Email send failed:', err)
     return { error: 'Eroare la trimiterea email-ului.' }
   }
 

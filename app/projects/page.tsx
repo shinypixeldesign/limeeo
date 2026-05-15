@@ -59,22 +59,35 @@ function DeadlineBadge({ deadline }: { deadline: string | null }) {
 
 type ProjectWithClient = Project & { client: Client | null }
 
+type SharedProject = {
+  id: string
+  project_id: string
+  role: string
+  project: ProjectWithClient | null
+}
+
 export default async function ProjectsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const [projectsRes, profileRes] = await Promise.all([
+  const [projectsRes, profileRes, sharedRes] = await Promise.all([
     supabase
       .from('projects')
       .select('*, client:clients(id, name, company)')
       .eq('user_id', user!.id)
       .order('created_at', { ascending: false }),
     supabase.from('profiles').select('plan').eq('id', user!.id).single(),
+    supabase
+      .from('project_members')
+      .select('id, project_id, role, project:projects(*, client:clients(id, name, company))')
+      .eq('member_user_id', user!.id)
+      .eq('status', 'accepted'),
   ])
 
   const projects = (projectsRes.data ?? []) as ProjectWithClient[]
   const plan = profileRes.data?.plan ?? 'free'
   const atFreeLimit = plan === 'free' && projects.length >= 2
+  const sharedProjects = (sharedRes.data ?? []) as unknown as SharedProject[]
 
   const activeCount = projects.filter(p => p.status === 'active').length
   const completedCount = projects.filter(p => p.status === 'completed').length
@@ -196,6 +209,73 @@ export default async function ProjectsPage() {
               </Link>
             )
           })}
+        </div>
+      )}
+
+      {/* Proiecte partajate (unde ești invitat) */}
+      {sharedProjects.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4">
+            Proiecte partajate cu mine
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {sharedProjects.map(({ id, project, role }) => {
+              if (!project) return null
+              const sc = statusConfig[project.status]
+              const gradient = project.client ? getAvatarGradient(project.client.name) : getAvatarGradient(project.name)
+              const initials = project.client ? getInitials(project.client.name) : getInitials(project.name)
+
+              return (
+                <Link
+                  key={id}
+                  href={`/projects/${project.id}`}
+                  className="block bg-white rounded-[20px] p-5 shadow-sm shadow-black/5 hover:shadow-md hover:shadow-black/8 transition-all cursor-pointer group relative"
+                >
+                  {/* Role badge */}
+                  <div className="absolute top-3 right-3">
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ring-1 ring-inset ${role === 'editor' ? 'bg-indigo-50 text-indigo-700 ring-indigo-200' : 'bg-slate-50 text-slate-600 ring-slate-200'}`}>
+                      {role === 'editor' ? 'Editor' : 'Vizitator'}
+                    </span>
+                  </div>
+
+                  {/* Top row */}
+                  <div className="flex items-center justify-between mb-4 pr-16">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`w-9 h-9 rounded-[10px] bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0`}>
+                        <span className="text-xs font-bold text-white">{initials}</span>
+                      </div>
+                      <span className="text-sm text-gray-500 truncate max-w-[120px]">
+                        {project.client?.name ?? 'Fără client'}
+                      </span>
+                    </div>
+                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 ${sc.bg} rounded-full`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
+                      <span className={`text-xs font-semibold ${sc.text}`}>{sc.label}</span>
+                    </div>
+                  </div>
+
+                  <h3 className="font-bold text-gray-900 text-base mb-1 group-hover:text-black transition leading-snug">
+                    {project.name}
+                  </h3>
+
+                  {project.description && (
+                    <p className="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed">
+                      {project.description}
+                    </p>
+                  )}
+
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100 mt-auto">
+                    <DeadlineBadge deadline={project.deadline} />
+                    {!project.deadline && (
+                      <span className="text-xs text-gray-400">
+                        {new Date(project.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
         </div>
       )}
     </div>
