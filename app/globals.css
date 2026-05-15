@@ -169,6 +169,11 @@
    ============================================================ */
 *, *::before, *::after { box-sizing: border-box; }
 
+/* Urbanist se moștenește inclusiv pe form elements */
+input, select, textarea, button {
+  font-family: inherit;
+}
+
 html, body {
   background: var(--bg);
   color: var(--fg);

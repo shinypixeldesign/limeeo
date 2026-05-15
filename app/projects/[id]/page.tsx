@@ -201,7 +201,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       </div>
 
       {/* ── Main grid — 3 cols: [Left sidebar] [Financial Health] [Main content] ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[260px_260px_1fr] gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[300px_300px_1fr] gap-5 items-start">
 
         {/* ════ Col 1 — Status + Timeline + Team ════ */}
         <div className="space-y-4">
