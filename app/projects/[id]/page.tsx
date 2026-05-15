@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Calendar, Clock, DollarSign, Edit2, FolderOpen } from 'lucide-react'
+import { Calendar, Clock, Edit2, FolderOpen } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import type { Project, Client, ProjectTask, ProjectMember } from '@/types/database'
 import DeleteProjectButton from '@/components/projects/DeleteProjectButton'
@@ -153,25 +153,25 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="p-8">
-      {/* Header */}
-      <div className="mb-8">
+      {/* ── Header ── */}
+      <div className="mb-7">
         <Link
           href="/projects"
-          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4"
+          className="inline-flex items-center gap-1.5 text-[#6f7a72] hover:text-[#0e0f12] transition-colors mb-4 text-sm font-medium"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
-          <span className="text-sm font-medium">Înapoi la proiecte</span>
+          Înapoi la proiecte
         </Link>
 
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">{project.name}</h1>
+            <h1 className="text-3xl font-bold text-[#0e0f12]">{project.name}</h1>
             {project.tags && project.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-3">
+              <div className="flex flex-wrap gap-2 mt-2">
                 {project.tags.map((tag: string) => (
-                  <span key={tag} className="text-xs font-medium px-3 py-1 bg-gray-100 text-gray-600 rounded-full">
+                  <span key={tag} className="text-xs font-medium px-2.5 py-1 bg-[#e9eeea] text-[#4d574f] rounded-full">
                     #{tag}
                   </span>
                 ))}
@@ -179,96 +179,90 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             )}
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
             {isOwner ? (
               <>
                 <Link
                   href={`/projects/${project.id}/edit`}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-900 font-semibold rounded-full transition-all shadow-sm hover:shadow"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#dbe2dc] hover:border-[#c4ccc5] text-[#0e0f12] font-semibold rounded-full transition-all shadow-sm text-sm"
                 >
-                  <Edit2 size={16} />
+                  <Edit2 size={15} />
                   Editează
                 </Link>
                 <DeleteProjectButton projectId={project.id} projectName={project.name} />
               </>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full">
-                👁 Acces de vizualizare
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#e9eeea] text-[#4d574f] text-xs font-semibold rounded-full">
+                👁 Vizualizare
               </span>
             )}
           </div>
         </div>
       </div>
 
-      {/* Main grid — 4 cols: [Status 1fr] [Timeline 1fr] [Brief+Tasks 2fr] */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 items-start">
+      {/* ── Main grid — 3 cols: [Left sidebar] [Financial Health] [Main content] ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-[260px_260px_1fr] gap-5 items-start">
 
-        {/* ── Col 1 — Status + Financial + Team ── */}
+        {/* ════ Col 1 — Status + Timeline + Team ════ */}
         <div className="space-y-4">
 
-          {/* Status Card — compact */}
+          {/* Status + Progres + Client */}
           <div className="bg-white rounded-[20px] p-5 shadow-lg shadow-black/5">
-            {/* Status badge */}
             <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${sc.bg} rounded-full mb-4`}>
               <div className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
               <span className={`text-xs font-bold ${sc.text}`}>{sc.label}</span>
             </div>
 
-            {/* Donut — compact, horizontal layout */}
             <div className="flex items-center gap-4 mb-4">
-              <div className="relative w-20 h-20 shrink-0">
-                <svg className="transform -rotate-90 w-20 h-20" viewBox="0 0 80 80">
-                  <circle cx="40" cy="40" r="32" stroke="#f3f4f6" strokeWidth="9" fill="none" />
+              <div className="relative w-[72px] h-[72px] shrink-0">
+                <svg className="transform -rotate-90 w-[72px] h-[72px]" viewBox="0 0 72 72">
+                  <circle cx="36" cy="36" r="28" stroke="#e9eeea" strokeWidth="8" fill="none" />
                   <circle
-                    cx="40" cy="40" r="32"
+                    cx="36" cy="36" r="28"
                     stroke="#acff55"
-                    strokeWidth="9"
+                    strokeWidth="8"
                     fill="none"
-                    strokeDasharray={2 * Math.PI * 32}
-                    strokeDashoffset={2 * Math.PI * 32 * (1 - progressPct / 100)}
+                    strokeDasharray={2 * Math.PI * 28}
+                    strokeDashoffset={2 * Math.PI * 28 * (1 - progressPct / 100)}
                     strokeLinecap="round"
                   />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-lg font-bold text-gray-900">{progressPct}%</span>
+                  <span className="text-base font-bold text-[#0e0f12]">{progressPct}%</span>
                 </div>
               </div>
               <div>
-                <p className="text-xs font-medium text-gray-500 leading-tight">Completare</p>
-                <p className="text-xs font-medium text-gray-500 leading-tight">proiect</p>
-                {totalTasks > 0 && (
-                  <p className="text-xs text-gray-400 mt-1">{completedTasks}/{totalTasks} sarcini</p>
-                )}
+                <p className="text-xs font-semibold text-[#6f7a72]">Completare</p>
+                {totalTasks > 0
+                  ? <p className="text-xs text-[#9ba6a0] mt-0.5">{completedTasks}/{totalTasks} sarcini</p>
+                  : <p className="text-xs text-[#9ba6a0] mt-0.5">Nicio sarcină</p>
+                }
               </div>
             </div>
 
             {/* Client */}
             {project.client && (
-              <div className="pt-4 border-t border-gray-100">
-                <p className="text-xs font-medium text-gray-400 mb-2 uppercase tracking-wide">Client</p>
+              <div className="pt-4 border-t border-[#e9eeea]">
+                <p className="text-[10px] font-bold text-[#9ba6a0] mb-2 uppercase tracking-widest">Client</p>
                 <Link href={`/clients/${project.client.id}`} className="flex items-center gap-2.5 group">
                   <div className={`w-9 h-9 bg-gradient-to-br ${clientGradient} rounded-[10px] flex items-center justify-center shrink-0`}>
                     <span className="text-xs font-bold text-white">{clientInitials}</span>
                   </div>
                   <div className="min-w-0">
-                    <p className="font-bold text-gray-900 text-sm group-hover:text-black transition truncate">
-                      {project.client.name}
-                    </p>
-                    {project.client.company && (
-                      <p className="text-xs text-gray-500 truncate">{project.client.company}</p>
-                    )}
+                    <p className="font-bold text-[#0e0f12] text-sm group-hover:text-black transition truncate">{project.client.name}</p>
+                    {project.client.company && <p className="text-xs text-[#6f7a72] truncate">{project.client.company}</p>}
                   </div>
                 </Link>
                 <div className="flex gap-1.5 mt-3">
                   {project.client.email && (
                     <a href={`mailto:${project.client.email}`}
-                      className="flex-1 py-1.5 text-xs font-semibold text-center bg-gray-100 hover:bg-gray-200 rounded-[8px] text-gray-700 transition truncate px-1">
+                      className="flex-1 py-1.5 text-xs font-semibold text-center bg-[#f5f8f5] hover:bg-[#e9eeea] rounded-[8px] text-[#4d574f] transition px-1 truncate">
                       ✉ Email
                     </a>
                   )}
                   {project.client.phone && (
                     <a href={`tel:${project.client.phone}`}
-                      className="flex-1 py-1.5 text-xs font-semibold text-center bg-gray-100 hover:bg-gray-200 rounded-[8px] text-gray-700 transition">
+                      className="flex-1 py-1.5 text-xs font-semibold text-center bg-[#f5f8f5] hover:bg-[#e9eeea] rounded-[8px] text-[#4d574f] transition">
                       ☎ Sună
                     </a>
                   )}
@@ -277,62 +271,36 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             )}
           </div>
 
-          {/* Financial Card — compact */}
-          {(project.budget || isHourly) && (
-            <div className="bg-white rounded-[20px] p-5 shadow-lg shadow-black/5">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wide">Financiar</h3>
-                <Link href="/time" className="text-xs font-semibold text-[#acff55] hover:opacity-80 transition">
-                  {isHourly ? '+ Pontaj →' : 'Pontaj →'}
-                </Link>
-              </div>
-
-              {isHourly ? (
-                <div className="space-y-2">
-                  <div className="p-3 bg-gray-50 rounded-[12px]">
-                    <p className="text-xs text-gray-500 mb-0.5">Tarif orar</p>
-                    <p className="text-base font-bold text-gray-900">
-                      {(project.hourly_rate ?? 0).toLocaleString('ro-RO')}
-                      <span className="text-xs font-medium ml-1">{project.currency}/h</span>
+          {/* Timeline */}
+          <div className="bg-white rounded-[20px] p-5 shadow-lg shadow-black/5">
+            <h3 className="text-[11px] font-bold text-[#0e0f12] mb-4 uppercase tracking-widest">Timeline</h3>
+            <div className="space-y-3.5">
+              {project.start_date && (
+                <div>
+                  <p className="text-[10px] font-bold text-[#9ba6a0] mb-1 uppercase tracking-widest">Start</p>
+                  <div className="flex items-center gap-1.5">
+                    <Calendar size={12} className="text-[#9ba6a0] shrink-0" />
+                    <p className="font-semibold text-[#0e0f12] text-xs">
+                      {new Date(project.start_date).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </p>
                   </div>
-                  <div className="p-3 bg-blue-50 rounded-[12px]">
-                    <p className="text-xs text-blue-700 mb-0.5">Ore pontate</p>
-                    <p className="text-base font-bold text-blue-900">
-                      {Math.floor(totalHours)}h {Math.round((totalHours % 1) * 60)}m
-                    </p>
-                  </div>
-                  <div className="p-3 bg-green-50 rounded-[12px]">
-                    <p className="text-xs text-green-700 mb-0.5">Cost acumulat</p>
-                    <p className="text-base font-bold text-green-900">
-                      {trackedCost.toLocaleString('ro-RO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      <span className="text-xs font-medium ml-1">{project.currency}</span>
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="p-3 bg-green-50 rounded-[12px]">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <DollarSign size={13} className="text-green-600" />
-                    <p className="text-xs text-green-700">Valoare proiect</p>
-                  </div>
-                  <p className="text-xl font-bold text-green-900">
-                    {project.budget!.toLocaleString('ro-RO')}
-                    <span className="text-sm font-medium ml-1">{project.currency}</span>
-                  </p>
                 </div>
               )}
+              <div>
+                <p className="text-[10px] font-bold text-[#9ba6a0] mb-1 uppercase tracking-widest">Creat</p>
+                <div className="flex items-center gap-1.5">
+                  <Calendar size={12} className="text-[#9ba6a0] shrink-0" />
+                  <p className="font-semibold text-[#0e0f12] text-xs">
+                    {new Date(project.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </p>
+                </div>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-[#9ba6a0] mb-1.5 uppercase tracking-widest">Deadline</p>
+                <DeadlineInfo deadline={project.deadline} />
+              </div>
             </div>
-          )}
-
-          {/* Expenses */}
-          <ExpensesCard
-            projectId={project.id}
-            expenses={expenses}
-            currency={project.currency}
-            isOwner={isOwner}
-            canEdit={canEdit}
-          />
+          </div>
 
           {/* Team */}
           <TeamMembers
@@ -343,56 +311,58 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           />
         </div>
 
-        {/* ── Col 2 — Timeline ── */}
+        {/* ════ Col 2 — Financial Health (unified) ════ */}
         <div className="space-y-4">
-          <div className="bg-white rounded-[20px] p-5 shadow-lg shadow-black/5">
-            <h3 className="text-xs font-bold text-gray-900 mb-4 uppercase tracking-wide">Timeline</h3>
-            <div className="space-y-4">
-              {project.start_date && (
-                <div>
-                  <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">Start</p>
-                  <div className="flex items-center gap-1.5">
-                    <Calendar size={13} className="text-gray-400 shrink-0" />
-                    <p className="font-semibold text-gray-900 text-xs leading-tight">
-                      {new Date(project.start_date).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
-                    </p>
-                  </div>
-                </div>
-              )}
-              <div>
-                <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">Creat</p>
-                <div className="flex items-center gap-1.5">
-                  <Calendar size={13} className="text-gray-400 shrink-0" />
-                  <p className="font-semibold text-gray-900 text-xs leading-tight">
-                    {new Date(project.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </p>
-                </div>
-              </div>
-              <div>
-                <p className="text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">Deadline</p>
-                <DeadlineInfo deadline={project.deadline} />
-              </div>
+          {/* Pontaj link — deasupra cardului, vizibil */}
+          {isHourly && (
+            <div className="flex justify-end">
+              <Link
+                href="/time"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#dbe2dc] text-[#4d574f] hover:border-[#acff55] hover:text-[#0e0f12] font-semibold rounded-full transition-all text-xs shadow-sm"
+              >
+                <Clock size={12} />
+                Pontaj →
+              </Link>
             </div>
-          </div>
+          )}
+
+          <ExpensesCard
+            projectId={project.id}
+            expenses={expenses}
+            currency={project.currency}
+            isOwner={isOwner}
+            canEdit={canEdit}
+            budget={project.budget ?? null}
+            budgetType={isHourly ? 'hourly' : 'fixed'}
+            hourlyRate={project.hourly_rate ?? null}
+            trackedCost={trackedCost}
+            totalHours={totalHours}
+          />
         </div>
 
-        {/* ── Col 3+4 — Description + Tasks ── */}
-        <div className="lg:col-span-2 space-y-5">
-
-          {/* Project Brief */}
+        {/* ════ Col 3 — Descriere + Sarcini ════ */}
+        <div className="space-y-5">
           {project.description ? (
             <div className="bg-white rounded-[20px] p-6 shadow-lg shadow-black/5">
-              <h3 className="text-xs font-bold text-gray-900 mb-4 uppercase tracking-wide">Descriere proiect</h3>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line text-sm">
+              <h3 className="text-[11px] font-bold text-[#0e0f12] mb-4 uppercase tracking-widest">Descriere proiect</h3>
+              <p className="text-[#4d574f] leading-relaxed whitespace-pre-line text-sm">
                 {project.description}
               </p>
             </div>
           ) : (
-            <div className="bg-white rounded-[20px] p-5 shadow-lg shadow-black/5 border-2 border-dashed border-gray-100">
-              <div className="flex items-center gap-3 text-gray-400">
+            <div className="bg-white rounded-[20px] p-5 shadow-lg shadow-black/5 border-2 border-dashed border-[#e9eeea]">
+              <div className="flex items-center gap-3 text-[#9ba6a0]">
                 <FolderOpen size={18} />
                 {isOwner ? (
-                  <p className="text-sm">Nicio descriere adăugată. <Link href={`/projects/${project.id}/edit`} className="text-[#acff55] font-semibold hover:opacity-80">Adaugă una →</Link></p>
+                  <p className="text-sm">
+                    Nicio descriere adăugată.{' '}
+                    <Link
+                      href={`/projects/${project.id}/edit`}
+                      className="text-[#5aa70d] font-semibold hover:text-[#437d0a] transition-colors"
+                    >
+                      Adaugă una →
+                    </Link>
+                  </p>
                 ) : (
                   <p className="text-sm">Nicio descriere adăugată.</p>
                 )}
@@ -400,7 +370,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             </div>
           )}
 
-          {/* Task Engine */}
           <TaskList projectId={project.id} initialTasks={tasks} members={members} />
         </div>
       </div>
