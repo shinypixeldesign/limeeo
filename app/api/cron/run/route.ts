@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
+import { syncAllSmartBillInvoices } from '@/app/actions/smartbill'
 
 interface AutomationRule {
   id: string
@@ -258,10 +259,22 @@ export async function GET(request: Request) {
     // nu blocăm restul cron-ului dacă timer-check eșuează
   }
 
+  // ─── SmartBill sync ───────────────────────────────────────────────────────
+  // Sincronizează statusul facturilor emise în SmartBill (plătite / șterse)
+  let smartbillSynced = 0
+  try {
+    const sbResult = await syncAllSmartBillInvoices()
+    smartbillSynced = sbResult.synced
+    if (sbResult.errors > 0) errors.push(`SmartBill sync: ${sbResult.errors} erori`)
+  } catch (err) {
+    errors.push(`SmartBill sync: ${err instanceof Error ? err.message : String(err)}`)
+  }
+
   return NextResponse.json({
     ok: true,
     emails_sent: emailsSent,
     timer_reminders_sent: remindersSent,
+    smartbill_synced: smartbillSynced,
     errors: errors.length > 0 ? errors : undefined,
   })
 }
