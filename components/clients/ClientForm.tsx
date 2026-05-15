@@ -16,12 +16,15 @@ const inputCls = 'w-full px-4 py-3 border border-gray-200 rounded-[12px] bg-gray
 const labelCls = 'block text-sm font-bold text-gray-700 mb-3'
 
 interface AnafResult {
-  denumire: string
-  adresa: string
-  nrRegCom: string
-  scpTVA: boolean
-  city: string
-  county: string
+  success: boolean
+  error?: string
+  data?: {
+    denumire: string
+    adresa: string
+    nrRegCom: string
+    platitorTva: boolean
+    stare: string
+  }
 }
 
 export default function ClientForm({ action, client, cancelHref }: ClientFormProps) {
@@ -54,24 +57,24 @@ export default function ClientForm({ action, client, cancelHref }: ClientFormPro
     setAnafSuccess(false)
 
     try {
-      const res = await fetch('/api/anaf-lookup', {
+      const res = await fetch('/api/anaf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cui: cui.trim() }),
       })
-      const data: AnafResult & { error?: string } = await res.json()
+      const result: AnafResult = await res.json()
 
-      if (!res.ok || data.error) {
-        setAnafError(data.error ?? 'Eroare la interogarea ANAF.')
+      if (!result.success || !result.data) {
+        setAnafError(result.error ?? 'Eroare la interogarea ANAF.')
         return
       }
 
+      const { denumire, adresa, nrRegCom } = result.data
+
       // Populează câmpurile
-      if (data.denumire) setCompany(data.denumire)
-      if (data.adresa)   setAddress(data.adresa)
-      if (data.nrRegCom) setRegCom(data.nrRegCom)
-      if (data.city)     setCity(data.city)
-      if (data.county)   setCounty(data.county)
+      if (denumire) setCompany(denumire)
+      if (adresa)   setAddress(adresa)
+      if (nrRegCom) setRegCom(nrRegCom)
       setAnafSuccess(true)
     } catch {
       setAnafError('Nu s-a putut conecta la serviciul ANAF. Verifică conexiunea.')
