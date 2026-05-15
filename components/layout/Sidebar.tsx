@@ -81,7 +81,7 @@ export default function Sidebar({ userEmail, userName, unreadCount = 0 }: Sideba
       : pathname.startsWith(href)
 
   return (
-    <aside className="flex flex-col w-64 h-screen bg-[#1a1a1a] shrink-0 overflow-y-auto">
+    <aside className="flex flex-col w-64 h-screen bg-[#0e0f12] shrink-0 overflow-y-auto">
       {/* Logo */}
       <Link href="/dashboard" className="flex items-center px-6 py-6 mb-2 shrink-0">
         <Image src="/logo-white.svg" alt="Limeeo" width={110} height={22} priority />

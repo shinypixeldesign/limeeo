@@ -1,37 +1,296 @@
-@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&display=swap');
+/* Urbanist — all weights, via Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap');
 @import "tailwindcss";
 
+/* ============================================================
+   Limeeo Design System — CSS Tokens
+   Single source of truth for all visual primitives.
+   ============================================================ */
 :root {
-  --background: #e9eeea;
-  --foreground: #0c0e12;
-  --card: #ffffff;
-  --card-foreground: #0c0e12;
-  --primary: #acff55;
-  --primary-foreground: #0c0e12;
-  --muted: #f3f3f3;
-  --muted-foreground: #717182;
-  --border: rgba(0, 0, 0, 0.08);
-  --radius: 1.5rem;
-  --sidebar-bg: #1a1a1a;
-  --accent-lime: #acff55;
-  --accent-lime-hover: #9fee44;
+  /* ── Brand palette (4 core swatches) ── */
+  --limeeo-ink:   #0e0f12;
+  --limeeo-lime:  #acff55;
+  --limeeo-sage:  #cfdcd0;
+  --limeeo-mist:  #e9eeea;
+  --limeeo-white: #ffffff;
+
+  /* ── Lime tint scale ── */
+  --lime-50:  #f3ffe1;
+  --lime-100: #e3ffbd;
+  --lime-200: #ceff90;
+  --lime-300: #acff55;
+  --lime-400: #93ee35;
+  --lime-500: #76d318;
+  --lime-600: #5aa70d;
+  --lime-700: #437d0a;
+
+  /* ── Neutrals (sage-tinted) ── */
+  --neutral-0:   #ffffff;
+  --neutral-50:  #f5f8f5;
+  --neutral-100: #e9eeea;
+  --neutral-200: #dbe2dc;
+  --neutral-300: #c4ccc5;
+  --neutral-400: #9ba6a0;
+  --neutral-500: #6f7a72;
+  --neutral-600: #4d574f;
+  --neutral-700: #2e342f;
+  --neutral-800: #1b1f1c;
+  --neutral-900: #0e0f12;
+
+  /* ── Semantic surfaces ── */
+  --bg:          var(--neutral-100);  /* page bg — never white */
+  --bg-card:     var(--neutral-0);
+  --bg-elevated: var(--neutral-0);
+  --bg-inverse:  var(--neutral-900);
+  --bg-accent:   var(--lime-300);
+
+  /* ── Semantic text ── */
+  --fg:         var(--neutral-900);
+  --fg-1:       var(--neutral-900);
+  --fg-2:       var(--neutral-600);
+  --fg-3:       var(--neutral-500);
+  --fg-muted:   var(--neutral-400);
+  --fg-on-lime: var(--neutral-900);
+  --fg-on-ink:  var(--neutral-0);
+
+  /* ── Borders ── */
+  --border:        rgba(14,15,18,0.06);
+  --border-soft:   rgba(14,15,18,0.04);
+  --border-strong: rgba(14,15,18,0.12);
+
+  /* ── Status colors ── */
+  --status-todo:          #f5b54a;
+  --status-todo-bg:       #fff4e0;
+  --status-progress:      #6c8cf5;
+  --status-progress-bg:   #e8efff;
+  --status-done:          #3fb96b;
+  --status-done-bg:       #e3f6e9;
+  --status-research:      #b18cf2;
+  --status-research-bg:   #f0e8ff;
+  --status-content:       #ee7aa7;
+  --status-content-bg:    #ffe6ef;
+  --status-design:        #8a9af2;
+  --status-design-bg:     #ebeefb;
+
+  /* ── Typography ── */
+  --font-sans:    'Urbanist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Urbanist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    ui-monospace, 'JetBrains Mono', 'Fira Code', monospace;
+
+  --fs-display: clamp(56px, 7.2vw, 112px);
+  --fs-h1:      clamp(40px, 4.6vw, 72px);
+  --fs-h2:      clamp(30px, 3vw, 48px);
+  --fs-h3:      24px;
+  --fs-h4:      20px;
+  --fs-body-lg: 18px;
+  --fs-body:    16px;
+  --fs-small:   14px;
+  --fs-eyebrow: 12px;
+
+  --lh-display: 0.95;
+  --lh-heading: 1.05;
+  --lh-body:    1.55;
+
+  --tracking-display: -0.04em;
+  --tracking-heading: -0.025em;
+  --tracking-body:    -0.005em;
+  --tracking-eyebrow: 0.08em;
+
+  /* ── Geometry ── */
+  --radius-xs:  10px;
+  --radius-sm:  14px;
+  --radius-md:  20px;
+  --radius-lg:  28px;
+  --radius-xl:  36px;
+  --radius-2xl: 48px;
+  --radius-pill: 999px;
+
+  /* ── Shadows (soft, diffuse) ── */
+  --shadow-sm:   0 1px 2px rgba(14,15,18,0.04);
+  --shadow-card: 0 1px 0 rgba(14,15,18,0.02),
+                 0 12px 24px -16px rgba(14,15,18,0.10),
+                 0 24px 60px -32px rgba(14,15,18,0.10);
+  --shadow-lg:   0 1px 0 rgba(14,15,18,0.02),
+                 0 24px 48px -24px rgba(14,15,18,0.14),
+                 0 60px 120px -40px rgba(14,15,18,0.14);
+  --shadow-lime: 0 18px 40px -12px rgba(118,211,24,0.45);
+
+  /* ── Spacing (8px base) ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  /* ── Motion ── */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+  --dur-3: 360ms;
+
+  /* ── Legacy aliases (keep existing components working) ── */
+  --background:          var(--bg);
+  --foreground:          var(--fg);
+  --card:                var(--bg-card);
+  --card-foreground:     var(--fg);
+  --primary:             var(--limeeo-lime);
+  --primary-foreground:  var(--fg-on-lime);
+  --muted:               var(--neutral-50);
+  --muted-foreground:    var(--fg-3);
+  --border-color:        var(--border);
+  --radius:              var(--radius-lg);
+  --sidebar-bg:          var(--limeeo-ink);
+  --accent-lime:         var(--limeeo-lime);
+  --accent-lime-hover:   var(--lime-400);
 }
 
+/* ── Tailwind token bridge ── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --font-sans: 'Urbanist', sans-serif;
+  --color-background:         var(--bg);
+  --color-foreground:         var(--fg);
+  --color-card:               var(--bg-card);
+  --color-card-foreground:    var(--fg);
+  --color-primary:            var(--limeeo-lime);
+  --color-primary-foreground: var(--fg-on-lime);
+  --color-muted:              var(--neutral-50);
+  --color-muted-foreground:   var(--fg-3);
+  --color-border:             var(--border);
+  --font-sans:                var(--font-sans);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: 'Urbanist', sans-serif;
+/* ============================================================
+   Base styles
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tracking-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
+
+/* ── Display & heading type styles ── */
+.t-display {
+  font-size: var(--fs-display);
+  font-weight: 800;
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-display);
+}
+.t-h1 {
+  font-size: var(--fs-h1);
+  font-weight: 800;
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-display);
+}
+.t-h2 {
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-heading);
+}
+.t-h3 {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: var(--tracking-heading);
+}
+.t-eyebrow {
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--fg-2);
+}
+
+/* ── Component primitives ── */
+.lm-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.lm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border-radius: var(--radius-pill);
+  padding: 14px 22px;
+  font-size: 15px;
+  border: 0;
+  cursor: pointer;
+  transition: transform var(--dur-1) var(--ease-out),
+              background var(--dur-2) var(--ease-out),
+              box-shadow var(--dur-2) var(--ease-out);
+}
+.lm-btn--primary {
+  background: var(--bg-accent);
+  color: var(--fg-on-lime);
+}
+.lm-btn--primary:hover {
+  background: var(--lime-400);
+  box-shadow: var(--shadow-lime);
+}
+.lm-btn--primary:active { transform: translateY(1px) scale(0.99); }
+
+.lm-btn--ink {
+  background: var(--bg-inverse);
+  color: var(--fg-on-ink);
+}
+.lm-btn--ink:hover { background: var(--neutral-700); }
+
+.lm-btn--ghost {
+  background: transparent;
+  color: var(--fg);
+}
+.lm-btn--ghost:hover { background: rgba(14,15,18,0.04); }
+
+.lm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  background: var(--neutral-100);
+  color: var(--fg);
+}
+
+/* ── Input focus ring ── */
+.lm-input {
+  background: var(--bg-card);
+  border: 0;
+  box-shadow: inset 0 0 0 1px var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--fg);
+  outline: none;
+  transition: box-shadow var(--dur-1) var(--ease-out);
+}
+.lm-input:focus {
+  box-shadow: inset 0 0 0 2px var(--limeeo-lime);
+}
+
+/* ── Scrollbar (minimal) ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--neutral-300); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--neutral-400); }
